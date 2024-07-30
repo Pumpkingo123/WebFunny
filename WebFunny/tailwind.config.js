@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       fontSize: {
-        base: '16px',
+        base: '16',
       },
       scrollbar: ['rounded'],
       colors: {
@@ -29,4 +29,3 @@ export default {
   },
   plugins: [],
 }
-
