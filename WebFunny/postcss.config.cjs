@@ -3,7 +3,7 @@ module.exports = {
     tailwindcss: {},
     autoprefixer: {},
     "postcss-pxtorem": {
-      rootValue: 16,
+      rootValue: 37.5,
       propList: ['*'],
       selectorBlackList: ['.norem'] // 过滤掉.norem-开头的class，不进行rem转换
     }

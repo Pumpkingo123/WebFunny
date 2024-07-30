@@ -4,16 +4,20 @@ export default {
   theme: {
     extend: {
       fontSize: {
-        base: '16',
+        base: '37.5px',
       },
       scrollbar: ['rounded'],
       colors: {
         black: '#000000',
+      },
+      borderRadius: {
+        'cs': '1px', 
+        'xs': '2px',
       }
     },
     fontSize: {
-      xs: '13px',
-      sm: '16px',
+      xs: '1px',
+      sm: '1px',
       base: '16px',
       lg: '18px',
       xl: '20px',

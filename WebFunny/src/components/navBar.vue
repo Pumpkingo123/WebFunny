@@ -1,13 +1,40 @@
 <script setup>
-import categoryConfig from '../../config.js'
+import { useMenuStore } from '../stores/menuStore.js';
+import { useRoute } from 'vue-router';
+import categoryConfig from '../../config.js';
+import router from '../router/index.js';
+
+const menuStore = useMenuStore();
+const route = useRoute();
+
+const handleMenuSelect = (key) => {
+  const findRouteByKey = (key, items) => {
+    for (const item of items) {
+      if (item.key === key && item.route) {
+        return item.route;
+      }
+      if (item.children) {
+        const route = findRouteByKey(key, item.children);
+        if (route) {
+          return route;
+        }
+      }
+    }
+    return null;
+  };
+
+  const routePath = findRouteByKey(key, categoryConfig);
+  if (routePath) {
+    router.push(routePath);
+    menuStore.setActiveItem(key); 
+  }
+};
 </script>
 
 <template>
-	<div class="fixed top-1.5 h-full">
-			<n-layout class="h-full">
-				<n-layout-sider :width="165" :native-scrollbar="false">
-					<n-menu :options="categoryConfig" />
-				</n-layout-sider>
-			</n-layout>
-	</div>
+  <n-layout>
+    <n-layout-sider :native-scrollbar="false">
+      <n-menu class="w-[62px] fixed top-1.5 h-full" :options="categoryConfig" @update:value="handleMenuSelect" :value="menuStore.activeItem" />
+    </n-layout-sider>
+  </n-layout>
 </template>
