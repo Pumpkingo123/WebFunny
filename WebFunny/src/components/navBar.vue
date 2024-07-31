@@ -1,11 +1,9 @@
 <script setup>
 import { useMenuStore } from '../stores/menuStore.js';
-import { useRoute } from 'vue-router';
-import categoryConfig from '../../config.js';
+import categoryConfig from '../config/navConfig.js';
 import router from '../router/index.js';
 
 const menuStore = useMenuStore();
-const route = useRoute();
 
 const handleMenuSelect = (key) => {
   const findRouteByKey = (key, items) => {

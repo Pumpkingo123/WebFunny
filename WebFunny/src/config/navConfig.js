@@ -1,5 +1,5 @@
 import { BarChartOutline, BugOutline, FileTrayFullOutline } from '@vicons/ionicons5'
-import { renderIcon } from './src/utils/renderIcon.js'
+import { renderIcon } from '../utils/renderIcon.js'
 
 const categoryConfig = [
     {
