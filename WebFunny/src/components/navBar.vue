@@ -30,8 +30,8 @@ const handleMenuSelect = (key) => {
 </script>
 
 <template>
-  <n-layout>
-    <n-layout-sider :native-scrollbar="false">
+  <n-layout has-sider>
+    <n-layout-sider :native-scrollbar="false" has-sider>
       <n-menu class="w-[62px] fixed top-1.5 h-full" :options="categoryConfig" @update:value="handleMenuSelect" :value="menuStore.activeItem" />
     </n-layout-sider>
   </n-layout>

@@ -3,8 +3,14 @@ export default {
   content: ['./src/**/*.{html,vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
+      borderWidth: {
+        '0.5': '0.5px', 
+      },
       fontSize: {
         base: '37.5px',
+      },
+      spacing:{
+        '1': '2px',
       },
       scrollbar: ['rounded'],
       colors: {
@@ -17,7 +23,8 @@ export default {
     },
     fontSize: {
       xs: '1px',
-      sm: '1px',
+      sm: '4px',
+      ssm:'4.5px',
       base: '16px',
       lg: '18px',
       xl: '20px',

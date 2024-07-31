@@ -1,5 +1,5 @@
 <template>
-	<n-layout-header class="fixed z-10 flex justify-between">
+	<n-layout-header class="fixed z-10 flex justify-between has-sider">
 		<img
 			class="h-1.5 mt-[1.5px] ml-0.5"
 			src="https://www.webfunny.cn/wf_center/logos/logo.png"
