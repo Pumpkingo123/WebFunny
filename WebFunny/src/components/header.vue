@@ -1,3 +1,7 @@
+<script setup>
+
+</script>
+
 <template>
 	<n-layout-header class="fixed z-10 flex justify-between has-sider">
 		<img
@@ -19,4 +23,3 @@
 	</n-layout-header>
 </template>
 
-<script setup></script>
