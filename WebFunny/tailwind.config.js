@@ -14,7 +14,9 @@ export default {
       },
       scrollbar: ['rounded'],
       colors: {
+        rice: '#fdf7ef',
         black: '#000000',
+        yellow: '#fdad45',
       },
       borderRadius: {
         'cs': '1px', 
