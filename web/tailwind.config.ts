@@ -9,9 +9,6 @@ export default defineConfig({
       borderWidth: {
         '0.5': '0.5px', 
       },
-      fontSize: {
-        base: '37.5px',
-      },
       spacing:{
         '1': '2px',
       },

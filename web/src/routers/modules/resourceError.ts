@@ -1,12 +1,19 @@
-import { RouteRecordRaw } from 'vue-router';
-import resourceError from '../../views/resourceError/index.vue';
+import { RouteRecordRaw } from 'vue-router'
+import { Layout } from '../constant'
 
-const jsRoutes: Array<RouteRecordRaw> = [
+const resourceRoutes: Array<RouteRecordRaw> = [
   {
     path: '/resourceError',
     name: 'resourceError',
-    component: resourceError,
+    component: Layout,
+    children: [
+      {
+        path: '',
+        name: '',
+        component: () => import('../../views/resourceError/index.vue')
+      }
+    ]
   }
-];
+]
 
-export default jsRoutes;
+export default resourceRoutes
