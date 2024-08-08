@@ -1,11 +1,11 @@
 <template>
-  <n-layout-header class="fixed z-10 flex justify-between has-sider h-14">
+  <n-layout-header class="z-10 flex justify-between has-sider h-14 sticky top-0">
     <div class="h-full w-65 flex justify-center items-center">
       <img class="h-12" src="https://www.webfunny.cn/wf_center/logos/logo.png" />
     </div>
-    <div class="h-full w-65 ml-auto">
+    <div class="h-full w-65 ml-auto flex justify-around">
       <n-menu
-        class="w-full h-full flex items-center"
+        class="w-full h-full flex items-center justify-around"
         :options="menuOptions"
         @update:value="handleRoute"
         v-model:value="activeRoute"
@@ -25,28 +25,42 @@
 </template>
 
 <script setup lang="ts">
-import { h, ref } from 'vue'
+import { h, ref, onMounted } from 'vue'
 import { NAvatar, NText, NIcon } from 'naive-ui'
 import { DiamondOutline, FileTrayFull } from '@vicons/ionicons5'
 import { IosArrowDown, IosWarning, IosPulse } from '@vicons/ionicons4'
 import { renderIcon } from '../../../utils/index'
 import router from '../../../routers/index'
+import { useRoute } from 'vue-router'
 
-const activeRoute = ref<string | null | undefined>(null)
+const activeRoute = ref(localStorage.getItem('activeRoute') || 'home')
 
-const handleRoute = (key, parentKey = null) => {
+const route = useRoute()
+
+const handleRoute = async (key: string) => {
+  await router.push({ name: key })
+  const currentRouteMeta = route.meta || null
+  const parentKey = currentRouteMeta.parentKey as string
   const routeToSet = parentKey || key
-  router.push({ name: key })
   activeRoute.value = routeToSet
-  // console.log(`Routing to ${key}, active route is now ${activeRoute.value}`);
+  localStorage.setItem('activeRoute', routeToSet)
+  console.log('Route set to:', routeToSet)
 }
 
-const renderCustomSection = (iconComponent, titleText, detailText, key, parentKey) => {
+onMounted(() => {
+  if (activeRoute.value === null) {
+    activeRoute.value = 'home'
+    localStorage.setItem('activeRoute', 'home')
+  }
+  console.log('222', activeRoute.value)
+})
+
+const renderCustomSection = (section) => {
   return h(
     'div',
     {
       style: 'display: flex; align-items: center; padding: 8px 12px;',
-      onClick: () => handleRoute(key, parentKey)
+      onClick: () => handleRoute(section.key)
     },
     [
       h(
@@ -56,20 +70,29 @@ const renderCustomSection = (iconComponent, titleText, detailText, key, parentKe
           style: 'margin-right: 12px;'
         },
         {
-          default: () => h(iconComponent)
+          default: () => h(section.icon)
         }
       ),
       h('div', null, [
-        h('div', null, [h(NText, { depth: 2 }, { default: () => titleText })]),
+        h('div', null, [h(NText, { depth: 2 }, { default: () => section.title })]),
         h('div', { style: 'font-size: 12px;' }, [
-          h(NText, { depth: 3 }, { default: () => detailText })
+          h(NText, { depth: 3 }, { default: () => section.description })
         ])
       ])
     ]
   )
 }
 
-const menuOptions: MenuOption[] = [
+interface Section {
+  key: string;
+  title?: string;
+  description?: string;
+  label?: string;
+  icon?: any;  // 根据你的实际类型进行调整
+  children?: Section[];  // 递归类型，子菜单也遵循同样的结构
+}
+
+const sections = ref<Section[]>([
   {
     label: '首页',
     key: 'home'
@@ -84,51 +107,47 @@ const menuOptions: MenuOption[] = [
     icon: renderIcon(IosArrowDown),
     children: [
       {
-        title: '错误统计',
-        key: 'jsError',
         icon: IosWarning,
-        type: 'render',
-        parentKey: 'errorMenu',
-        render: () =>
-          renderCustomSection(
-            IosWarning,
-            '错误统计',
-            '错误统计，错误详情，错误定位',
-            'jsError',
-            'errorMenu'
-          )
+        title: '错误统计',
+        description: '错误统计，错误详情，错误定位',
+        key: 'jsError'
       },
       {
-        title: 'API接口错误统计',
-        key: 'httpError',
         icon: IosPulse,
-        type: 'render',
-        parentKey: 'errorMenu',
-        render: () =>
-          renderCustomSection(
-            IosPulse,
-            'Api接口错误统计',
-            '统计400，500等接口异常错误',
-            'httpError',
-            'errorMenu'
-          )
+        title: 'Api接口错误统计',
+        description: '统计400，500等接口异常错误',
+        key: 'httpError'
       },
       {
-        title: '静态资源错误统计',
-        key: 'resourceError',
         icon: FileTrayFull,
-        type: 'render',
-        parentKey: 'errorMenu',
-        render: () =>
-          renderCustomSection(
-            FileTrayFull,
-            '静态资源错误统计',
-            '统计js,css文件等加载失败',
-            'resourceError',
-            'errorMenu'
-          )
+        title: '静态资源错误统计',
+        description: '统计js,css文件等加载失败',
+        key: 'resourceError'
       }
     ]
   }
-]
+])
+
+const menuOptions = ref(
+  sections.value.map((section) => {
+    if (section.children) {
+      // 处理具有子菜单的section
+      return {
+        label: section.label,
+        key: section.key,
+        icon: section.icon,
+        children: section.children.map((child) => ({
+          key: child.key,
+          type: 'render',
+          render: () => renderCustomSection(child)
+        }))
+      }
+    } else {
+      return {
+        key: section.key,
+        label: section.label
+      }
+    }
+  })
+)
 </script>

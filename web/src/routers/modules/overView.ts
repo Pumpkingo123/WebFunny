@@ -4,7 +4,7 @@ import { Layout } from '../constant'
 const overViewRoutes: Array<RouteRecordRaw> = [
   {
     path: '',
-    name: '',
+    name: 'overviewLayout',
     component: Layout,
     children: [
       {

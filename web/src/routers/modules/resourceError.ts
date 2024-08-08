@@ -3,14 +3,17 @@ import { Layout } from '../constant'
 
 const resourceRoutes: Array<RouteRecordRaw> = [
   {
-    path: '/resourceError',
-    name: 'resourceError',
+    path: '',
+    name: '',
     component: Layout,
     children: [
       {
-        path: '',
-        name: '',
-        component: () => import('../../views/resourceError/index.vue')
+        path: '/resourceError',
+        name: 'resourceError',
+        component: () => import('../../views/resourceError/index.vue'),
+        meta: {
+          parentKey: 'errorMenu' 
+        }
       }
     ]
   }

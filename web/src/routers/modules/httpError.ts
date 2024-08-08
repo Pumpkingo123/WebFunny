@@ -3,14 +3,17 @@ import { Layout } from '../constant'
 
 const httpRoutes: Array<RouteRecordRaw> = [
   {
-    path: '/httpError',
-    name: 'httpError',
+    path: '',
+    name: '',
     component: Layout,
     children: [
       {
-        path: '',
-        name: '',
-        component: () => import('../../views/httpError/index.vue')
+        path: '/httpError',
+        name: 'httpError',
+        component: () => import('../../views/httpError/index.vue'),
+        meta: {
+          parentKey: 'errorMenu'
+        }
       }
     ]
   }

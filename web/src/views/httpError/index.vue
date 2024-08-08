@@ -1,3 +1,4 @@
 <template>
-	<div>333</div>
-</template>
+	<div class="w-full flex-grow bg-gray-100">
+	</div>
+  </template>

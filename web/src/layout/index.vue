@@ -1,8 +1,8 @@
 <template>
-  <n-layout class="h-100vh">
+  <n-layout class="flex flex-col h-100vh">
     <PageHeader />
     <navBar v-if="showSidebar" />    
-      <router-view class="mt-14" />
+      <router-view class="h-full router-view-height" />
   </n-layout>
 </template>
 
@@ -17,3 +17,9 @@ const route = useRoute()
 const showSidebar = computed(() => route.name === 'overView')
 
 </script>
+
+<style scoped>
+.router-view-height {
+  height: calc(100vh - 3.5rem); 
+}
+</style>

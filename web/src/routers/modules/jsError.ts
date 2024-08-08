@@ -3,14 +3,17 @@ import { Layout } from '../constant'
 
 const jsRoutes: Array<RouteRecordRaw> = [
   {
-    path: '/jsError',
-    name: 'jsError',
+    path: '',
+    name: '',
     component: Layout,
     children: [
       {
-        path: '',
-        name: '',
-        component: () => import('../../views/jsError/index.vue')
+        path: '/jsError',
+        name: 'jsError',
+        component: () => import('../../views/jsError/index.vue'),
+        meta:{
+          parentKey:'errorMenu'
+        }
       }
     ]
   }
