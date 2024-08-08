@@ -28,7 +28,7 @@ const handleMenuSelect = (key: string) => {
   localStorage.setItem('activeKey', key) // 保存到 localStorage
 }
 
-const menuOptions: MenuOption[] = [
+const menuOptions = ref([
   {
     label: '概览',
     key: 'over_view'
@@ -45,7 +45,7 @@ const menuOptions: MenuOption[] = [
     label: '地域分布',
     key: 'location'
   }
-]
+])
 </script>
 
 <style scoped>
