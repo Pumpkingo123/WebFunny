@@ -46,17 +46,32 @@
 	
       </div>
 	  <div>
-		<n-input v-model:value="value" type="text" placeholder="请输入应用名称" />
+		<n-input v-model:value="serachValue" type="text" placeholder="请输入应用名称" />
 	</div>
     </div>
+    <main class="flex flex-wrap justify-around p-1 mt-1.5">
+    <div class="mx-5 rounded-2xl w-1/4 h-81 bg-rice mt-5" v-for="i in 9" :key="'large' + i">
+        <div class="w-full flex justify-between h-10 mb-[3px]">
+          <div class="ml-[3px] w-2 mt-1 items-center"></div>
+          <div class="mr-[3px] w-[15px] mt-1 flex justify-between items-center">
+          </div>
+        </div>
+        <div class="rounded-xl flex justify-between mx-2 my-2 bg-white h-21">
+          </div>
+        <div class="rounded-xl flex-col mx-2 my-2 bg-white h-21">
+
+        </div>
+        <div class="rounded-xl flex-col mx-2 my-1 bg-white h-21">
+        </div>
+      </div>
+    </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-onMounted(() => {
-  console.log('111111111')
-})
+import { ref } from 'vue'
+
+const handleUpdateValue = ref('all')
 
 const envOptions: MenuOption[] = [
   {

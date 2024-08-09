@@ -5,33 +5,26 @@
         class="w-60 h-full fixed top-14"
         :options="menuOptions"
         @update:value="handleMenuSelect"
-        v-model:value="activeKey"
+        :value="menuStore.activeKey"
       />
     </n-layout-sider>
   </n-layout>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
+import { useMenuStore } from '../../../stores/menuStore'
 
-const activeKey = ref(localStorage.getItem('activeKey') || 'over_view')
-
-onMounted(() => {
-  if (activeKey.value === null) {
-    activeKey.value = 'over_view'
-    localStorage.setItem('activeKey', 'over_view')
-  }
-})
+const menuStore = useMenuStore()
 
 const handleMenuSelect = (key: string) => {
-  activeKey.value = key
-  localStorage.setItem('activeKey', key) // 保存到 localStorage
+  menuStore.setActiveKey(key)
 }
 
 const menuOptions = ref([
   {
     label: '概览',
-    key: 'over_view'
+    key: 'overAll'
   },
   {
     label: '健康状况',
@@ -39,7 +32,7 @@ const menuOptions = ref([
   },
   {
     label: '性能预览',
-    key: 'powerOverview'
+    key: 'performance'
   },
   {
     label: '地域分布',

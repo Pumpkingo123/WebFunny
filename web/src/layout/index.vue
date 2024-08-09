@@ -2,7 +2,7 @@
   <n-layout class="flex flex-col h-100vh">
     <PageHeader />
     <navBar v-if="showSidebar" />    
-      <router-view class="h-full router-view-height" />
+      <router-view class="h-full router-view-height overflow-auto" />
   </n-layout>
 </template>
 

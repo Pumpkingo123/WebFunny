@@ -88,8 +88,8 @@ interface Section {
   title?: string;
   description?: string;
   label?: string;
-  icon?: any;  // 根据你的实际类型进行调整
-  children?: Section[];  // 递归类型，子菜单也遵循同样的结构
+  icon?: any;
+  children?: Section[];
 }
 
 const sections = ref<Section[]>([
