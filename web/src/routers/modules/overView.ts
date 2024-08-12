@@ -10,7 +10,7 @@ const overViewRoutes: Array<RouteRecordRaw> = [
       {
         path: '/overView',
         name: 'overView',
-        component: () => import('../../views/overView/index.vue')
+        component: () => import('@/views/overView/index.vue')
       }
     ]
   }

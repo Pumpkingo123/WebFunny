@@ -10,7 +10,7 @@ const httpRoutes: Array<RouteRecordRaw> = [
       {
         path: '/httpError',
         name: 'httpError',
-        component: () => import('../../views/httpError/index.vue'),
+        component: () => import('@/views/httpError/index.vue'),
         meta: {
           parentKey: 'errorMenu'
         }

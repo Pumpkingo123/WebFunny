@@ -10,7 +10,7 @@ const jsRoutes: Array<RouteRecordRaw> = [
       {
         path: '/jsError',
         name: 'jsError',
-        component: () => import('../../views/jsError/index.vue'),
+        component: () => import('@/views/jsError/index.vue'),
         meta:{
           parentKey:'errorMenu'
         }

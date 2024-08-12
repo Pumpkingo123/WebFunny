@@ -10,7 +10,7 @@ const resourceRoutes: Array<RouteRecordRaw> = [
       {
         path: '/resourceError',
         name: 'resourceError',
-        component: () => import('../../views/resourceError/index.vue'),
+        component: () => import('@/views/resourceError/index.vue'),
         meta: {
           parentKey: 'errorMenu' 
         }

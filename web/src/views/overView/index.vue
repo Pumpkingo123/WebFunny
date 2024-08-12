@@ -8,11 +8,11 @@
 </template>
 
 <script setup lang="ts">
-import { useMenuStore } from '../../stores/menuStore'
-import health from './health.vue'
-import location from './location.vue'
-import overAll from './overAll.vue'
-import performance from './performance.vue'
+import { useMenuStore } from '@/stores/menuStore'
+import health from '@/views/overView/health.vue'
+import location from '@/views/overView/location.vue'
+import overAll from '@/views/overView/overAll.vue'
+import performance from '@/views/overView/performance.vue'
 
 const menuStore = useMenuStore()
 

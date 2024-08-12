@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useMenuStore } from '../../../stores/menuStore'
+import { useMenuStore } from '@/stores/menuStore'
 
 const menuStore = useMenuStore()
 

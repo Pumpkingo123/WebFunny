@@ -25,16 +25,15 @@
 </template>
 
 <script setup lang="ts">
-import { h, ref, onMounted } from 'vue'
+import { h, ref, reactive, onMounted } from 'vue'
 import { NAvatar, NText, NIcon } from 'naive-ui'
 import { DiamondOutline, FileTrayFull } from '@vicons/ionicons5'
 import { IosArrowDown, IosWarning, IosPulse } from '@vicons/ionicons4'
-import { renderIcon } from '../../../utils/index'
-import router from '../../../routers/index'
+import { renderIcon } from '@/utils/index'
+import router from '@/routers/index'
 import { useRoute } from 'vue-router'
 
 const activeRoute = ref(localStorage.getItem('activeRoute') || 'home')
-
 const route = useRoute()
 
 const handleRoute = async (key: string) => {
@@ -55,12 +54,30 @@ onMounted(() => {
   console.log('222', activeRoute.value)
 })
 
+const hoverStates = reactive(new Map())
+
 const renderCustomSection = (section) => {
+  if (!hoverStates.has(section.key)) {
+    hoverStates.set(section.key, ref(false))
+  }
+  const hovering = hoverStates.get(section.key)
+
   return h(
     'div',
     {
-      style: 'display: flex; align-items: center; padding: 8px 12px;',
-      onClick: () => handleRoute(section.key)
+      style: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: '8px 12px',
+        backgroundColor: hovering.value ? '#e0e0e0' : 'transparent'
+      },
+      onClick: () => handleRoute(section.key),
+      onMouseenter: () => {
+        hovering.value = true
+      },
+      onMouseleave: () => {
+        hovering.value = false
+      }
     },
     [
       h(
@@ -84,12 +101,12 @@ const renderCustomSection = (section) => {
 }
 
 interface Section {
-  key: string;
-  title?: string;
-  description?: string;
-  label?: string;
-  icon?: any;
-  children?: Section[];
+  key: string
+  title?: string
+  description?: string
+  label?: string
+  icon?: any
+  children?: Section[]
 }
 
 const sections = ref<Section[]>([
