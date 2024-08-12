@@ -29,7 +29,7 @@ import { h, ref, reactive, onMounted } from 'vue'
 import { NAvatar, NText, NIcon } from 'naive-ui'
 import { DiamondOutline, FileTrayFull } from '@vicons/ionicons5'
 import { IosArrowDown, IosWarning, IosPulse } from '@vicons/ionicons4'
-import { renderIcon } from '@/utils/index'
+import { renderIcon } from '@/utils/rederIcon'
 import router from '@/routers/index'
 import { useRoute } from 'vue-router'
 
