@@ -6,7 +6,7 @@ interface MenuState {
 
 export const useMenuStore = defineStore('menu', {
   state: (): MenuState => ({
-    activeKey: sessionStorage.getItem('activeKey') || 'overAll',
+    activeKey: sessionStorage.getItem('activeKey') || 'overAll'
   }),
   actions: {
     setActiveKey(key: string): void {

@@ -27,11 +27,10 @@
 <script setup lang="ts">
 import { h, ref, reactive, onMounted } from 'vue'
 import { NAvatar, NText, NIcon } from 'naive-ui'
-import { DiamondOutline, FileTrayFull } from '@vicons/ionicons5'
-import { IosArrowDown, IosWarning, IosPulse } from '@vicons/ionicons4'
-import { renderIcon } from '@/utils/rederIcon'
+import { DiamondOutline } from '@vicons/ionicons5'
 import router from '@/routers/index'
 import { useRoute } from 'vue-router'
+import { sections } from '@/config/headerConfig'
 
 const activeRoute = ref(localStorage.getItem('activeRoute') || 'home')
 const route = useRoute()
@@ -51,7 +50,6 @@ onMounted(() => {
     activeRoute.value = 'home'
     localStorage.setItem('activeRoute', 'home')
   }
-  console.log('222', activeRoute.value)
 })
 
 const hoverStates = reactive(new Map())
@@ -100,53 +98,8 @@ const renderCustomSection = (section) => {
   )
 }
 
-interface Section {
-  key: string
-  title?: string
-  description?: string
-  label?: string
-  icon?: any
-  children?: Section[]
-}
-
-const sections = ref<Section[]>([
-  {
-    label: '首页',
-    key: 'home'
-  },
-  {
-    label: '概览',
-    key: 'overView'
-  },
-  {
-    label: '错误',
-    key: 'errorMenu',
-    icon: renderIcon(IosArrowDown),
-    children: [
-      {
-        icon: IosWarning,
-        title: '错误统计',
-        description: '错误统计，错误详情，错误定位',
-        key: 'jsError'
-      },
-      {
-        icon: IosPulse,
-        title: 'Api接口错误统计',
-        description: '统计400，500等接口异常错误',
-        key: 'httpError'
-      },
-      {
-        icon: FileTrayFull,
-        title: '静态资源错误统计',
-        description: '统计js,css文件等加载失败',
-        key: 'resourceError'
-      }
-    ]
-  }
-])
-
 const menuOptions = ref(
-  sections.value.map((section) => {
+  sections.map((section) => {
     if (section.children) {
       // 处理具有子菜单的section
       return {

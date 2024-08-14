@@ -1,6 +1,6 @@
-import { NIcon } from 'naive-ui';
-import { h, Component } from 'vue';
+import { NIcon } from 'naive-ui'
+import { h, Component } from 'vue'
 
 export function renderIcon(icon: Component) {
-  return () => h(NIcon, null, { default: () => h(icon) });
+  return () => h(NIcon, null, { default: () => h(icon) })
 }

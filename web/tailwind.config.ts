@@ -28,10 +28,10 @@ export default defineConfig({
     fontSize: {
       xs: '1px',
       sm: '4px',
-      ssm: '4.5px',
+      ssm: '11.5px',
       base: '16px',
       lg: '18px',
-      xl: '20px',
+      xl: '25px',
       rxs: '12px',
       rrxs: '10px',
       '2xl': '24px',

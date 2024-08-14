@@ -1,13 +1,11 @@
 <template>
   <div class="ml-60 bg-gray-100">
-    <health v-if="menuStore.activeKey === 'health'" />
-    <location v-if="menuStore.activeKey === 'location'" />
-    <overAll v-if="menuStore.activeKey === 'overAll'" />
-    <performance v-if="menuStore.activeKey === 'performance'" />
+    <component :is="currentComponent" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useMenuStore } from '@/stores/menuStore'
 import health from '@/views/overView/health.vue'
 import location from '@/views/overView/location.vue'
@@ -16,5 +14,14 @@ import performance from '@/views/overView/performance.vue'
 
 const menuStore = useMenuStore()
 
-</script>
+const componentsMap = {
+  health,
+  location,
+  overAll,
+  performance
+}
 
+const currentComponent = computed(() => {
+  return componentsMap[menuStore.activeKey || 'overall']
+})
+</script>

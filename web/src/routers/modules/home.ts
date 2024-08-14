@@ -3,12 +3,12 @@ import { Layout } from '../constant'
 
 const homeRoutes: Array<RouteRecordRaw> = [
   {
-    path: '',  
-    name: 'layout',  
+    path: '',
+    name: 'layout',
     component: Layout,
     children: [
       {
-        path: '',  
+        path: '',
         name: 'home',
         component: () => import('@/views/home/index.vue')
       },
@@ -20,4 +20,4 @@ const homeRoutes: Array<RouteRecordRaw> = [
   }
 ]
 
-export default homeRoutes;
+export default homeRoutes
