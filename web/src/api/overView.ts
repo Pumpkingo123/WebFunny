@@ -4,7 +4,7 @@ class overView {
   getOverData(timeSize: number = 0, chooseUserTag: string = "", webMonitorId: string = "1") {
     const data = `timeSize=${timeSize}&chooseUserTag=${chooseUserTag}&webMonitorId=${webMonitorId}`
     return http.post(
-      `/getTodayFlowDataByTenMin`,
+      `/wfMonitor/getTodayFlowDataByTenMin`,
       data,
       {
         headers: {
