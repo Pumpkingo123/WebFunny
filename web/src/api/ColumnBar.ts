@@ -13,4 +13,4 @@ class ColumnBar {
   }
 }
 
-export default ColumnBar
+export default new ColumnBar

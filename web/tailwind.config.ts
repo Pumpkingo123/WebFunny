@@ -28,7 +28,7 @@ export default defineConfig({
     fontSize: {
       xs: '1px',
       sm: '4px',
-      ssm: '11.5px',
+      ssm: '10.5px',
       base: '16px',
       lg: '18px',
       xl: '25px',

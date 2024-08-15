@@ -96,10 +96,9 @@ const generateLabels = (start, end) => {
 }
 
 const fetchData = async () => {
-  const columnBar = new ColumnBar()
   const startDate = format(new Date(range.value[0]), 'yyyy-MM-dd')
   const endDate = format(new Date(range.value[1]), 'yyyy-MM-dd')
-  const response = await columnBar.getJsData(startDate, endDate, rangeLabel)
+  const response = await ColumnBar.getJsData(startDate, endDate, rangeLabel)
 
   if (response.code === 200 && response.data) {
     const { onError, consoleError, onErrorPer, consoleErrorPer } = response.data
