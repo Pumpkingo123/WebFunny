@@ -68,15 +68,21 @@
         <div class="rounded-xl flex justify-around mx-2 my-2 bg-white h-21">
           <div class="bg-white w-1/3 h-full flex flex-col">
             <div class="text-ssm flex justify-center h-5 mt-3">活跃用户数</div>
-            <div class="flex w-full justify-center mt-1"><scrollNumber :value="project.aliveNum"></scrollNumber></div>        
+            <div class="flex w-full justify-center mt-1">
+              <scrollNumber :value="project.aliveNum"></scrollNumber>
+            </div>
           </div>
           <div class="w-1/3 h-full">
             <div class="text-ssm flex justify-center h-5 mt-3">用户总数</div>
-            <div class="flex w-full justify-center mt-1 text-lg font-bold">{{ project.uvNum }}万</div>
+            <div class="flex w-full justify-center mt-1 text-lg font-bold">
+              {{ project.uvNum }}万
+            </div>
           </div>
           <div class="bg-white w-1/3 h-full">
             <div class="text-ssm flex justify-center h-5 mt-3">新用户数</div>
-            <div class="flex w-full justify-center mt-1 text-lg font-bold">{{ project.newUvNum }}万</div>
+            <div class="flex w-full justify-center mt-1 text-lg font-bold">
+              {{ project.newUvNum }}万
+            </div>
           </div>
         </div>
         <div class="rounded-xl mx-2 my-2 bg-white h-21 flex flex-row">
@@ -151,87 +157,134 @@
 
 <script setup lang="ts">
 import { onMounted, ref, onUnmounted } from 'vue'
-import homeInfo from '@/api/home'
+import {
+  getDetailData,
+  getProjectInfoListInRealTime,
+  getAliveCusInRealTime,
+  getProjectInfoInRealTime
+} from '@/api/home'
 import {
   SettingsOutline,
   BookmarksOutline,
   ApertureOutline,
   BonfireOutline
 } from '@vicons/ionicons5'
-import scrollNumber from "@/components/scrollNumber.vue"
+import scrollNumber from '@/components/scrollNumber.vue'
 
-const value = ref('all')
 const serachValue = ref('')
-const projects = ref([])
-const projectNums = ref([])
+const projects = ref<Project[]>([])
+const projectNums = ref<ProjectNums[]>([])
+const intervalId = ref<ReturnType<typeof setInterval> | null>(null)
+
+interface Project {
+  webMonitorId: string
+  projectName: string
+  jsErrorPer?: string
+  consoleErrorPer?: string
+  apiErrorPer?: string
+  resourceErrorPer?: string
+  customerLeaveRate?: number
+  httpSecondOpenRate?: number
+  pageSecondOpenRate?: number
+  todayUvCount?: number
+  uvNum?: string
+  newUvNum?: string
+  aliveNum?: number
+}
+
+interface ProjectNums {
+  webMonitorId: string
+  count: number
+}
 
 const fetchData = async () => {
   try {
-    const responseList = await homeInfo.getProjectInfoListInRealTime(
-      '0',
-      'all',
-      'all',
-      '',
-      'uvDesc',
-      'all',
-      '1'
-    )
-    projects.value = responseList.data
-    // 循环遍历
-    for (let project of projects.value) {
-      const userResponse = await homeInfo.getProjectInfoInRealTime(project.webMonitorId)
-      console.log("111",userResponse.data)
-      const detailResponse = await homeInfo.getDetailData(0, project.webMonitorId)
-      const {
-        customerLeaveRate,
-        httpErrorTotalCount,
-        httpSecondOpenRate,
-        jsConsoleErrorTotalCount,
-        jsErrorTotalCount,
-        pageSecondOpenRate,
-        resourceErrorTotalCount,
-        todayUvCount
-      } = detailResponse.data
-      const { uv, newCus } = userResponse.data
-      
-      Object.assign(project, {
-        jsErrorPer: ((jsErrorTotalCount / todayUvCount) * 100).toFixed(2),
-        consoleErrorPer: ((jsConsoleErrorTotalCount / todayUvCount) * 100).toFixed(2),
-        apiErrorPer: ((httpErrorTotalCount / todayUvCount) * 100).toFixed(2),
-        resourceErrorPer: ((resourceErrorTotalCount / todayUvCount) * 100).toFixed(2),
-        customerLeaveRate,
-        httpSecondOpenRate,
-        pageSecondOpenRate,
-        todayUvCount,
-        uvNum: (uv/10000).toFixed(1),
-        newUvNum: (newCus/10000).toFixed(1)
-      })
+    const params = {
+      page: '0',
+      pageSize: 'all',
+      env: 'all',
+      projectName: '',
+      sort: 'uvDesc',
+      teamId: 'all',
+      type: '1'
     }
+    const responseList = await getProjectInfoListInRealTime(params)
+    projects.value = responseList.data
+    projects.value = await Promise.all(
+      responseList.data.map(async (project) => {
+        const userResponse = await getProjectInfoInRealTime(project.webMonitorId)
+        const params = {
+          timeSize: 0,
+          webMonitorId: project.webMonitorId
+        }
+        const detailResponse = await getDetailData(params)
+        const {
+          customerLeaveRate,
+          httpErrorTotalCount,
+          httpSecondOpenRate,
+          jsConsoleErrorTotalCount,
+          jsErrorTotalCount,
+          pageSecondOpenRate,
+          resourceErrorTotalCount,
+          todayUvCount
+        } = detailResponse.data
+        const { uv, newCus } = userResponse.data
+        const updatedProject = {
+          ...project,
+          jsErrorPer: ((jsErrorTotalCount / todayUvCount) * 100).toFixed(2),
+          consoleErrorPer: ((jsConsoleErrorTotalCount / todayUvCount) * 100).toFixed(2),
+          apiErrorPer: ((httpErrorTotalCount / todayUvCount) * 100).toFixed(2),
+          resourceErrorPer: ((resourceErrorTotalCount / todayUvCount) * 100).toFixed(2),
+          customerLeaveRate,
+          httpSecondOpenRate,
+          pageSecondOpenRate,
+          todayUvCount,
+          uvNum: (uv / 10000).toFixed(1),
+          newUvNum: (newCus / 10000).toFixed(1)
+        }
+        return updatedProject
+      })
+    )
   } catch (error) {
     console.log(error)
   }
 }
 
 const fetchNum = async () => {
-  const responseNumList = await homeInfo.getAliveCusInRealTime();
-  console.log(responseNumList.data);
-  projectNums.value = responseNumList.data;
-  for (let projectNum of projectNums.value) {
-    const { webMonitorId, count } = projectNum; 
-    const project = projects.value.find(p => p.webMonitorId === webMonitorId);
-    if (project) {
-      project.aliveNum = count;
-    }
-    console.log(project?.aliveNum)
+  const params = {
+    webMonitorIdList: [
+      'webfunny_120',
+      'webfunny_121',
+      'webfunny_122',
+      'webfunny_123',
+      'webfunny_124',
+      'webfunny_125',
+      'webfunny_126',
+      'webfunny_127',
+      'webfunny_128'
+    ],
+    webMonitorId: '1'
   }
+  const responseNumList = await getAliveCusInRealTime(params)
+  projectNums.value = responseNumList.data
+  projects.value = projects.value.map((project) => {
+    const projectNum = projectNums.value.find((p) => p.webMonitorId === project.webMonitorId)
+    if (projectNum) {
+      project.aliveNum = projectNum.count
+    }
+    return project
+  })
 }
 
 onMounted(() => {
-  fetchData();
-  fetchNum();
-  const intervalId = setInterval(fetchNum, 4000);
-  onUnmounted(() => {
-    clearInterval(intervalId);
-  });
+  fetchData()
+  fetchNum()
+  // intervalId.value = setInterval(fetchNum, 4000)
+})
+
+onUnmounted(() => {
+  if (intervalId.value) {
+    clearInterval(intervalId.value)
+  }
 })
 </script>

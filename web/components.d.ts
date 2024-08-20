@@ -7,6 +7,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BarChart: typeof import('./src/components/barChart.vue')['default']
+    Card: typeof import('./src/components/card.vue')['default']
+    Chart: typeof import('./src/components/chart.vue')['default']
+    DataValue: typeof import('./src/components/dataValue.vue')['default']
+    DatePicker: typeof import('./src/components/datePicker.vue')['default']
     ErrorBar: typeof import('./src/components/errorBar.vue')['default']
     NAvatar: typeof import('naive-ui')['NAvatar']
     NBreadcrumb: typeof import('naive-ui')['NBreadcrumb']
@@ -26,6 +31,7 @@ declare module 'vue' {
     NMenu: typeof import('naive-ui')['NMenu']
     NProgress: typeof import('naive-ui')['NProgress']
     NSelect: typeof import('naive-ui')['NSelect']
+    NSpin: typeof import('naive-ui')['NSpin']
     NSplit: typeof import('naive-ui')['NSplit']
     NTooltip: typeof import('naive-ui')['NTooltip']
     RouterLink: typeof import('vue-router')['RouterLink']
