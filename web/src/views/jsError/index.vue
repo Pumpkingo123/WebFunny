@@ -4,7 +4,10 @@
       <div class="border-b-2 border-b-black-500 h-10">
         <div
           v-for="item in barItems"
-          :class="[ 'inline-block text-lg text-center cursor-pointer mt-2 mr-12 ml-3 relative', { 'text-orange-500 active-tab': item.key === activeKey } ]"
+          :class="[
+            'inline-block text-lg text-center cursor-pointer mt-2 mr-12 ml-3 relative',
+            { 'text-orange-500 active-tab': item.key === activeKey }
+          ]"
           @click="handleMenuChange(item.key, $event)"
         >
           {{ item.label }}
@@ -12,7 +15,11 @@
         <span
           ref="indicatorRef"
           class="absolute top-[50px] left-0 h-1 bg-orange-500"
-          style=" transition: left 0.3s ease, width 0.3s ease; "
+          style="
+            transition:
+              left 0.3s ease,
+              width 0.3s ease;
+          "
         ></span>
       </div>
       <div class="w-full h-10 mt-1 flex justify-between">
@@ -21,31 +28,33 @@
           <div class="w-10 flex items-center text-lg">{{ rangeLabel }}</div>
         </div>
         <div class="hh w-65 mr-4" color="red">
-          <n-date-picker v-model:value="range" type="daterange" clearable />
+          <dataRangePicker @update:rangeLabel="handleRangeLabelUpdate" @update:range="handleRangeUpdate" />
         </div>
       </div>
       <div style="height: 100%; width: 100%; background-color: white">
         <chart
           :labels="labels"
-          :onErrorData="onErrorData"
-          :consoleErrorData="consoleErrorData"
-          :onErrorPerData="onErrorPerData"
-          :consoleErrorPerData="consoleErrorPerData"
+          :lineData1="onErrorPerData"
+          :lineData2="consoleErrorPerData"
+          :barData1="onErrorData"
+          :barData2="consoleErrorData"
           :range="range"
+          :yAxisIDBar="'y1'"
+          :yAxisIDLine="'y2'"
           :fetchDataPromise="fetchDataPromise"
           :chartColors="{
-            onErrorPerColor: '#2cdd96',
-            consoleErrorPerColor: '#ff8639',
-            onErrorColor: '#58aefc',
-            consoleErrorColor: '#9596fc'
+            lineCol1: '#2cdd96',
+            lineCol2: '#ff8639',
+            barCol2: '#58aefc',
+            barCol1: '#7a79ff'
           }"
           :chartLabels="{
-            onErrorPerLabel: 'jsError',
-            consoleErrorPerLabel: 'consoleError',
-            onErrorLabel: 'onErrorPer',
-            consoleErrorLabel: 'consoleErrorPer'
+            lineDes1: 'jsErrorPer',
+            lineDes2: 'consoleErrorPer',
+            barDes1: 'onError',
+            barDes2: 'consoleError'
           }"
-          chartType="bar"
+          chartType="combined"
         />
       </div>
     </div>
@@ -53,34 +62,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { barItems } from '@/config/jsErrorBar'
-import { format } from 'date-fns'
+import { generateLabels } from '@/utils/generateLabels'
 import { getJsData } from '@/api/ColumnBar'
+import { formatData } from '@/utils/formatData'
+import { format } from 'date-fns'
+import dataRangePicker from '@/components/dateRangePicker.vue'
 import Chart from '@/components/chart.vue'
 
-// References and reactive variables
 const indicatorRef = ref<HTMLElement | null>(null)
 const activeKey = ref('over')
 const barItem = ref(barItems)
-const range = ref<[number, number]>([1723135260000, Date.now()])
-const fetchDataPromise = ref<Promise<unknown> | undefined>(undefined);
-
-const rangeLabel = computed(() => {
-  const startDate = new Date(range.value[0])
-  const endDate = new Date(range.value[1])
-  const diffTime = Math.abs(endDate.getTime() - startDate.getTime())
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1
-  return `${diffDays}天`
-})
-
+const range = ref<number[]>([0, Date.now()]);
+const fetchDataPromise = ref<Promise<unknown> | undefined>(undefined)
+const rangeLabel = ref<string>('')
 const onErrorData = ref<number[]>([])
 const consoleErrorData = ref<number[]>([])
 const onErrorPerData = ref<number[]>([])
 const consoleErrorPerData = ref<number[]>([])
 const labels = ref<string[]>([])
-const borderColor = ref<string>("")
-const backgroundColor = ref<string>("")
+const borderColor = ref<string>('')
+const backgroundColor = ref<string>('')
+
+const handleRangeLabelUpdate = (newRangeLabel: string) => {
+  rangeLabel.value = newRangeLabel
+}
+
+const handleRangeUpdate = (newRange: number[]) => {
+  range.value = newRange
+}
 
 // Function to update the position of the indicator
 const updateIndicatorPosition = (element: HTMLElement) => {
@@ -99,40 +110,18 @@ const handleMenuChange = (key: string, event: MouseEvent) => {
   updateIndicatorPosition(event.target as HTMLElement)
 }
 
-// Function to generate chart labels based on the selected date range
-const generateLabels = (start: number, end: number) => {
-  const labelList: string[] = []
-  const startDate = new Date(start)
-  const endDate = new Date(end)
-  while (startDate <= endDate) {
-    labelList.push(format(startDate, 'MM-dd'))
-    startDate.setDate(startDate.getDate() + 1)
-  }
-  return labelList
-}
-
 const fetchData = async () => {
   const startDate = format(new Date(range.value[0]), 'yyyy-MM-dd')
   const endDate = format(new Date(range.value[1]), 'yyyy-MM-dd')
   const response = await getJsData(startDate, endDate, rangeLabel.value)
-
   if (response.code === 200 && response.data) {
     const { onError, consoleError, onErrorPer, consoleErrorPer } = response.data
-
     // Update the reactive labels variable
     labels.value = generateLabels(range.value[0], range.value[1])
-
-    const formatData = (data: { day: string, count: number }[]) => {
-      return labels.value.map((label) => {
-        const item = data.find((d) => d.day === label)
-        return item ? item.count : 0
-      })
-    }
-
-    onErrorData.value = formatData(onError)
-    consoleErrorData.value = formatData(consoleError)
-    onErrorPerData.value = formatData(onErrorPer)
-    consoleErrorPerData.value = formatData(consoleErrorPer)
+    onErrorData.value = formatData(onError, labels.value, 'day')
+    consoleErrorData.value = formatData(consoleError, labels.value, 'day')
+    onErrorPerData.value = formatData(onErrorPer, labels.value, 'day')
+    consoleErrorPerData.value = formatData(consoleErrorPer, labels.value, 'day')
     borderColor.value = '#2cdd96'
     backgroundColor.value = '#2cdd96'
   } else {

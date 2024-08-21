@@ -16,4 +16,43 @@ function getUvCountMonth(params) {
   })
 }
 
-export { getOverData, getUvCountMonth }
+function getPvCountByHour(params) {
+  return http.post(`/wfMonitor/getPvCountByHour`, params, {
+    headers: {
+      'Content-Type': 'text/plain;charset=UTF-8'
+    }
+  })
+}
+
+function getUvCountByHour(params) {
+  return http.post(`/wfMonitor/getUvCountByHour`, params, {
+    headers: {
+      'Content-Type': 'text/plain;charset=UTF-8'
+    }
+  })
+}
+
+function getNewCustomerCountByHour(params) {
+  return http.post(`/wfMonitor/getNewCustomerCountByHour`, params, {
+    headers: {
+      'Content-Type': 'text/plain;charset=UTF-8'
+    }
+  })
+}
+
+function getCusLeavePercentByHour(params) {
+  return http.post(`/wfMonitor/getCusLeavePercentByHour`, params, {
+    headers: {
+      'Content-Type': 'text/plain;charset=UTF-8'
+    }
+  })
+}
+
+export {
+  getOverData,
+  getUvCountMonth,
+  getPvCountByHour,
+  getUvCountByHour,
+  getNewCustomerCountByHour,
+  getCusLeavePercentByHour
+}
