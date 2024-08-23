@@ -53,6 +53,7 @@
         class="mx-5 rounded-2xl w-1/4 h-81 bg-rice mt-5"
         v-for="(project, index) in projects"
         :key="'large' + index"
+        @click="handleClick()"
       >
         <div class="w-full flex justify-between h-10 mb-[3px]">
           <div class="ml-2 w-28 mt-1 flex items-center">{{ project.projectName }}</div>
@@ -147,7 +148,6 @@
                 <div class="flex w-full text-ssm">接口秒开率 {{ project.httpSecondOpenRate }}%</div>
               </div>
             </div>
-            <div></div>
           </div>
         </div>
       </div>
@@ -170,6 +170,7 @@ import {
   BonfireOutline
 } from '@vicons/ionicons5'
 import scrollNumber from '@/components/scrollNumber.vue'
+import router from '@/routers/index'
 
 const serachValue = ref('')
 const projects = ref<Project[]>([])
@@ -248,6 +249,10 @@ const fetchData = async () => {
   } catch (error) {
     console.log(error)
   }
+}
+
+const handleClick = () => {
+  router.push({ name: 'overView' })
 }
 
 const fetchNum = async () => {

@@ -43,7 +43,7 @@ import { ref, onMounted, nextTick, watch, computed } from 'vue'
 import { barItems } from '@/config/jsErrorBar'
 import Chart from 'chart.js/auto'
 import { format } from 'date-fns'
-import ColumnBar from '@/api/ColumnBar'
+import ColumnBar from '@/api/columnBar'
 
 // References and reactive variables
 const indicatorRef = ref<HTMLElement | null>(null)
@@ -115,8 +115,8 @@ const fetchData = async () => {
     data1.value = formatData(data)
     perData1.value = formatData(perData)
 
-    console.log('1111',data1)
-    console.log('2222',perData1)
+    console.log('1111', data1)
+    console.log('2222', perData1)
 
     // Update the chart data if the chart has been initialized
     if (myChart) {

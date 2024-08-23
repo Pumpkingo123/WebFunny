@@ -7,6 +7,7 @@
 <script setup lang="ts">
 import { onMounted, watch, nextTick, onBeforeUnmount } from 'vue'
 import Chart from 'chart.js/auto'
+import { defaultChartColors, defaultChartLabels, createDataset } from '@/config/chartConfig'
 
 // Props
 const props = defineProps({
@@ -15,40 +16,30 @@ const props = defineProps({
   yAxisIDLine: String,
   labels: Array,
   lineData2: {
-    type: Array,
+    type: Array<number>,
     default: () => []
   },
   lineData1: {
-    type: Array,
+    type: Array<number>,
     default: () => []
   },
   barData1: {
-    type: Array,
+    type: Array<number>,
     default: () => []
   },
   barData2: {
-    type: Array,
+    type: Array<number>,
     default: () => []
   },
   range: Array,
   fetchDataPromise: Promise,
   chartColors: {
     type: Object,
-    default: () => ({
-      barCol2: '#2cdd96',
-      barCol1: '#ff8639',
-      lineCol2: '#58aefc',
-      lineCol1: '#9596fc'
-    })
+    default: () => defaultChartColors
   },
   chartLabels: {
     type: Object,
-    default: () => ({
-      lineDes1: 'line1',
-      lineDes2: 'line2',
-      barDes1: 'bar1',
-      barDes2: 'bar2'
-    })
+    default: () => defaultChartLabels
   },
   chartType: {
     type: String,
@@ -73,61 +64,177 @@ const fetch = () => {
     chartInstance.data.labels = props.labels as string[]
 
     // 重新构造数据集
-    const updatedDatasets: Dataset[] = []
+    const updatedDatasets: ChartDataset<'line' | 'bar'>[] = []
 
     // 仅在有数据的情况下更新
     if (props.lineData1 && props.lineData1.length > 0) {
-      updatedDatasets.push({
-        type: 'line',
-        label: props.chartLabels.lineDes1,
-        borderColor: props.chartColors.lineCol1,
-        backgroundColor: props.chartColors.lineCol1,
-        data: props.lineData1 as number[],
-        borderDash: [0, 0],
-        yAxisID: props.yAxisIDLine,
-        tension: 4
-      })
+      updatedDatasets.push(
+        createDataset(
+          'line',
+          props.chartLabels.lineDes1,
+          props.lineData1,
+          props.chartColors.lineCol1,
+          props.chartColors.lineCol1,
+          props.yAxisIDLine
+        )
+      )
     }
 
     if (props.lineData2 && props.lineData2.length > 0) {
-      updatedDatasets.push({
-        type: 'line',
-        label: props.chartLabels.lineDes2,
-        borderColor: props.chartColors.lineCol2,
-        backgroundColor: props.chartColors.lineCol2,
-        data: props.lineData2 as number[],
-        borderDash: [0, 0],
-        yAxisID: props.yAxisIDLine,
-        tension: 16
-      })
+      updatedDatasets.push(
+        createDataset(
+          'line',
+          props.chartLabels.lineDes2,
+          props.lineData2,
+          props.chartColors.lineCol2,
+          props.chartColors.lineCol2,
+          props.yAxisIDLine
+        )
+      )
     }
 
     if (props.barData1 && props.barData1.length > 0) {
-      updatedDatasets.push({
-        type: 'bar',
-        label: props.chartLabels.barDes1,
-        data: props.barData1 as number[],
-        borderColor: props.chartColors.barCol1,
-        backgroundColor: props.chartColors.barCol1,
-        borderDash: [0, 0],
-        yAxisID: props.yAxisIDBar
-      })
+      updatedDatasets.push(
+        createDataset(
+          'bar',
+          props.chartLabels.barDes1,
+          props.barData1,
+          props.chartColors.barCol1,
+          props.chartColors.barCol1,
+          props.yAxisIDBar
+        )
+      )
     }
 
     if (props.barData2 && props.barData2.length > 0) {
-      updatedDatasets.push({
-        type: 'bar',
-        label: props.chartLabels.barDes2,
-        data: props.barData2 as number[],
-        borderColor: props.chartColors.barCol2,
-        backgroundColor: props.chartColors.barCol2,
-        borderDash: [0, 0],
-        yAxisID: props.yAxisIDBar
-      })
+      updatedDatasets.push(
+        createDataset(
+          'bar',
+          props.chartLabels.barDes2,
+          props.barData2,
+          props.chartColors.barCol2,
+          props.chartColors.barCol2,
+          props.yAxisIDBar
+        )
+      )
     }
 
     chartInstance.data.datasets = updatedDatasets
     chartInstance.update()
+  }
+}
+
+const initializeChart = async () => {
+  if (props.lineData1 || props.lineData2 || props.barData1 || props.barData2) {
+    destroyChart()
+    console.log('Chart is destroyed')
+    await nextTick()
+    if (props.fetchDataPromise) {
+      await props.fetchDataPromise
+    } else {
+      console.error('fetchDataPromise is undefined')
+    }
+    const ctx = document.getElementById(canvasId) as HTMLCanvasElement
+    if (ctx) {
+      const datasets: ChartDataset<'line' | 'bar'>[] = []
+      if (props.lineData1.length > 0) {
+        datasets.push(
+          createDataset(
+            props.chartType === 'line' || props.chartType === 'combined' ? 'line' : 'bar',
+            props.chartLabels.lineDes1,
+            props.lineData1,
+            props.chartColors.lineCol1,
+            props.chartColors.lineCol1,
+            props.yAxisIDLine
+          )
+        )
+      }
+
+      if (props.lineData2.length > 0) {
+        datasets.push(
+          createDataset(
+            props.chartType === 'line' || props.chartType === 'combined' ? 'line' : 'bar',
+            props.chartLabels.lineDes2,
+            props.lineData2,
+            props.chartColors.lineCol2,
+            props.chartColors.lineCol2,
+            props.yAxisIDLine
+          )
+        )
+      }
+
+      if (props.barData1.length > 0) {
+        datasets.push(
+          createDataset(
+            props.chartType === 'bar' || props.chartType === 'combined' ? 'bar' : 'line',
+            props.chartLabels.barDes1,
+            props.barData1,
+            props.chartColors.barCol1,
+            props.chartColors.barCol1,
+            props.yAxisIDBar
+          )
+        )
+      }
+
+      if (props.barData2.length > 0) {
+        datasets.push(
+          createDataset(
+            props.chartType === 'bar' || props.chartType === 'combined' ? 'bar' : 'line',
+            props.chartLabels.barDes2,
+            props.barData2,
+            props.chartColors.barCol2,
+            props.chartColors.barCol2,
+            props.yAxisIDBar
+          )
+        )
+      }
+      console.log('new chart build')
+      console.log('2')
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: props.labels,
+          datasets: datasets
+        },
+        options: {
+          scales: {
+            x: {
+              stacked: true
+            },
+            y1: {
+              type: 'linear',
+              position: 'left',
+              stacked: props.chartType === 'bar' || props.chartType === 'combined'
+            },
+            ...(props.chartType === 'combined' && {
+              y2: {
+                type: 'linear',
+                position: 'right',
+                ticks: {
+                  callback: function (value) {
+                    return value + '%'
+                  }
+                }
+              }
+            })
+          },
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          animation: {
+            duration: 1000,
+            easing: 'easeInOutQuart'
+          }
+        }
+      })
+    } else {
+      console.error('Failed to initialize chart')
+    }
+  } else {
+    console.log('No data available to create chart')
   }
 }
 
@@ -144,116 +251,11 @@ watch(
   }
 )
 
-onMounted(async () => {
-  destroyChart()
-  console.log('Chart is destroyed')
-  await nextTick()
-  if (props.fetchDataPromise) {
-    await props.fetchDataPromise
-  } else {
-    console.error('fetchDataPromise is undefined')
-  }
-  const ctx = document.getElementById(canvasId) as HTMLCanvasElement
-  if (ctx) {
-    const datasets: Dataset[] = []
-    if (props.lineData1.length > 0) {
-      datasets.push({
-        type: props.chartType === 'line' || props.chartType === 'combined' ? 'line' : 'bar',
-        label: props.chartLabels.lineDes1,
-        borderColor: props.chartColors.lineCol1,
-        backgroundColor: props.chartColors.lineCol1,
-        data: props.lineData1 as number[],
-        borderDash: [0, 0],
-        yAxisID: props.yAxisIDLine
-      })
-    }
-
-    if (props.lineData2.length > 0) {
-      datasets.push({
-        type: props.chartType === 'line' || props.chartType === 'combined' ? 'line' : 'bar',
-        label: props.chartLabels.lineDes2,
-        borderColor: props.chartColors.lineCol2,
-        backgroundColor: props.chartColors.lineCol2,
-        data: props.lineData2 as number[],
-        borderDash: [0, 0],
-        yAxisID: props.yAxisIDLine
-      })
-    }
-
-    if (props.barData1.length > 0) {
-      datasets.push({
-        type: props.chartType === 'bar' || props.chartType === 'combined' ? 'bar' : 'line',
-        label: props.chartLabels.barDes1,
-        data: props.barData1 as number[],
-        borderColor: props.chartColors.barCol1,
-        backgroundColor: props.chartColors.barCol1,
-        borderDash: [0, 0],
-        yAxisID: props.yAxisIDBar
-      })
-    }
-
-    if (props.barData2.length > 0) {
-      datasets.push({
-        type: props.chartType === 'bar' || props.chartType === 'combined' ? 'bar' : 'line',
-        label: props.chartLabels.barDes2,
-        data: props.barData2 as number[],
-        borderColor: props.chartColors.barCol2,
-        backgroundColor: props.chartColors.barCol2,
-        borderDash: [0, 0],
-        yAxisID: props.yAxisIDBar
-      })
-    }
-    console.log('new chart build')
-    chartInstance = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: props.labels,
-        datasets: datasets
-      },
-      options: {
-        scales: {
-          x: {
-            stacked: true
-          },
-          y1: {
-            type: 'linear',
-            position: 'left',
-            stacked: props.chartType === 'bar' || props.chartType === 'combined'
-          },
-          ...(props.chartType === 'combined' && {
-            y2: {
-              type: 'linear',
-              position: 'right',
-              ticks: {
-                callback: function (value) {
-                  return value + '%'
-                }
-              }
-            }
-          })
-        },
-        responsive: true,
-        plugins: {
-          legend: {
-            display: false
-          }
-        },
-        animation: {
-          duration: 1000,
-          easing: 'easeInOutQuart'
-        }
-      }
-    })
-  } else {
-    console.error('Failed to initialize chart')
-  }
+onMounted(() => {
+  initializeChart()
 })
 
 onBeforeUnmount(() => {
   destroyChart()
 })
 </script>
-
-<style scoped>
-/* Your styles here */
-</style>

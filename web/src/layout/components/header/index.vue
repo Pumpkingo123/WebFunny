@@ -42,7 +42,6 @@ const handleRoute = async (key: string) => {
   const routeToSet = parentKey || key
   activeRoute.value = routeToSet
   localStorage.setItem('activeRoute', routeToSet)
-  console.log('Route set to:', routeToSet)
 }
 
 onMounted(() => {

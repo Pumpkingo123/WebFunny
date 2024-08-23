@@ -5,6 +5,7 @@
         class="pt-1"
         :name="props.name"
         :labels="props.labels"
+        :range="props.range"
         :lineData1="props.lineData1"
         :lineData2="props.lineData2"
         :yAxisIDLine="props.yAxisIDLine"
@@ -24,6 +25,7 @@
     name: String,
     labels: Array,
     lineData1: Array,
+    range: Number,
     lineData2: Array,
     yAxisIDLine: String,
     fetchDataPromise: Promise,

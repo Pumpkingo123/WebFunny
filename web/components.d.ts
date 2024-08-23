@@ -14,6 +14,7 @@ declare module 'vue' {
     DataValue: typeof import('./src/components/dataValue.vue')['default']
     DatePicker: typeof import('./src/components/datePicker.vue')['default']
     DateRangePicker: typeof import('./src/components/dateRangePicker.vue')['default']
+    Doughnut: typeof import('./src/components/doughnut.vue')['default']
     ErrorBar: typeof import('./src/components/errorBar.vue')['default']
     NAvatar: typeof import('naive-ui')['NAvatar']
     NBreadcrumb: typeof import('naive-ui')['NBreadcrumb']

@@ -84,7 +84,7 @@
       :barData2="UVData"
       :yAxisIDBar="'y1'"
       :range="range"
-      :fetchDataPromise="fetchDataPromise"
+      :fetchDataPromise="fetchData1Promise"
       :chartColors="{
         barCol1: '#ff8639',
         barCol2: '#ffddc7'
@@ -105,7 +105,7 @@
       :lineData1="PvCount"
       :lineData2="PvCount7"
       yAxisIDLine="y1"
-      :fetchDataPromise="fetchDataPromise"
+      :fetchDataPromise="fetchData2Promise"
       :chartColors="{
         lineCol1: '#ffa627',
         lineCol2: '#bfcfff'
@@ -117,14 +117,14 @@
       chartType="line"
     />
     <Card
-    class="mr-4"
+      class="mr-4"
       title="用户活跃量趋势"
       name="userCount2"
       :labels="labels2"
       :lineData1="UvCount"
       :lineData2="UvCount7"
       yAxisIDLine="y1"
-      :fetchDataPromise="fetchDataPromise"
+      :fetchDataPromise="fetchData2Promise"
       :chartColors="{
         lineCol1: '#ffa627',
         lineCol2: '#bfcfff'
@@ -136,14 +136,14 @@
       chartType="line"
     />
     <Card
-    class="mr-4"
+      class="mr-4"
       title="新用户活跃量趋势"
       name="userCount3"
       :labels="labels2"
       :lineData1="NewCustomerCount"
       :lineData2="NewCustomerCount7"
       yAxisIDLine="y1"
-      :fetchDataPromise="fetchDataPromise"
+      :fetchDataPromise="fetchData2Promise"
       :chartColors="{
         lineCol1: '#ffa627',
         lineCol2: '#bfcfff'
@@ -155,14 +155,14 @@
       chartType="line"
     />
     <Card
-    class="mr-4"
+      class="mr-4"
       title="跳出率趋势"
       name="userCount4"
       :labels="labels2"
       :lineData1="CusLeavePercent"
       :lineData2="CusLeavePercent7"
       yAxisIDLine="y1"
-      :fetchDataPromise="fetchDataPromise"
+      :fetchDataPromise="fetchData2Promise"
       :chartColors="{
         lineCol1: '#ffa627',
         lineCol2: '#bfcfff'
@@ -216,8 +216,11 @@ const labels = ref<string[]>([])
 const labels2 = ref<string[]>([])
 const labels3 = ref<string[]>([])
 const selectedButton = ref('30天')
-const fetchDataPromise = ref<Promise<unknown> | undefined>(undefined)
+const fetchData1Promise = ref<Promise<unknown> | undefined>(undefined)
+const fetchData2Promise = ref<Promise<unknown> | undefined>(undefined)
 const now = new Date()
+const yesterday = subDays(now, 1)
+const lastWeek = subDays(now, 7)
 
 const selectButton = (button) => {
   selectedButton.value = button
@@ -298,12 +301,12 @@ const fetchHourData = async () => {
     const { today: uvToday, seven: uvSeven } = uvData.data
     const { today: leaveToday, seven: leaveSeven } = leaveData.data
     labels2.value = generateLabelsHour(
-      new Date(2024, 7, 20, 14).getTime(),
-      new Date(2024, 7, 21, 9).getTime()
+      new Date(yesterday.setHours(now.getHours() + 1)).getTime(),
+      new Date(now.setHours(now.getHours() - 1)).getTime()
     )
     labels3.value = generateLabelsHour(
-      new Date(2024, 7, 13, 14).getTime(),
-      new Date(2024, 7, 14, 9).getTime()
+      new Date(subDays(lastWeek, 1).setHours(now.getHours() + 2)).getTime(),
+      new Date(lastWeek.setHours(now.getHours() - 1)).getTime()
     )
     PvCount.value = formatData(pvToday, labels2.value, 'hour')
     PvCount7.value = formatData(pvSeven, labels3.value, 'hour')
@@ -313,23 +316,19 @@ const fetchHourData = async () => {
     NewCustomerCount7.value = formatData(newCustomerSeven, labels3.value, 'hour')
     CusLeavePercent.value = formatData(leaveToday, labels2.value, 'hour')
     CusLeavePercent7.value = formatData(leaveSeven, labels3.value, 'hour')
-    console.log('PvCount', PvCount.value)
-    console.log('PvCount7', PvCount7.value)
   } catch (error) {
     console.error('111', error)
   }
 }
 
+watch(range, () => {
+  fetchData1Promise.value = fetchMonthData()
+  fetchData2Promise.value = fetchHourData()
+})
+
 onMounted(async () => {
   fetchData()
-  fetchDataPromise.value = fetchHourData()
-  fetchDataPromise.value = fetchMonthData()
-})
-
-watch(range, () => {
-  fetchDataPromise.value = fetchMonthData()
-  fetchDataPromise.value = fetchHourData()
+  fetchData1Promise.value = fetchMonthData()
+  fetchData2Promise.value = fetchHourData()
 })
 </script>
-
-<style scoped></style>

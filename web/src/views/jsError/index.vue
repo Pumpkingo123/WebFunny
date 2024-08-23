@@ -28,7 +28,10 @@
           <div class="w-10 flex items-center text-lg">{{ rangeLabel }}</div>
         </div>
         <div class="hh w-65 mr-4" color="red">
-          <dataRangePicker @update:rangeLabel="handleRangeLabelUpdate" @update:range="handleRangeUpdate" />
+          <dataRangePicker
+            @update:rangeLabel="handleRangeLabelUpdate"
+            @update:range="handleRangeUpdate"
+          />
         </div>
       </div>
       <div style="height: 100%; width: 100%; background-color: white">
@@ -65,7 +68,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { barItems } from '@/config/jsErrorBar'
 import { generateLabels } from '@/utils/generateLabels'
-import { getJsData } from '@/api/ColumnBar'
+import { getJsData } from '@/api/columnBar'
 import { formatData } from '@/utils/formatData'
 import { format } from 'date-fns'
 import dataRangePicker from '@/components/dateRangePicker.vue'
@@ -74,7 +77,7 @@ import Chart from '@/components/chart.vue'
 const indicatorRef = ref<HTMLElement | null>(null)
 const activeKey = ref('over')
 const barItem = ref(barItems)
-const range = ref<number[]>([0, Date.now()]);
+const range = ref<number[]>([0, Date.now()])
 const fetchDataPromise = ref<Promise<unknown> | undefined>(undefined)
 const rangeLabel = ref<string>('')
 const onErrorData = ref<number[]>([])
