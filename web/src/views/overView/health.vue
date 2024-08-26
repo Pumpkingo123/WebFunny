@@ -226,9 +226,9 @@ const progressColor = computed(() => {
   if (score.value > 80) {
     return '#ff9724'
   } else if (score.value > 60) {
-    return 'green'
+    return '#28c989'
   } else {
-    return 'red'
+    return '#ff4e5c'
   }
 })
 

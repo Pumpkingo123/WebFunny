@@ -32,7 +32,7 @@ import router from '@/routers/index'
 import { useRoute } from 'vue-router'
 import { sections } from '@/config/headerConfig'
 
-const activeRoute = ref(localStorage.getItem('activeRoute') || 'home')
+const activeRoute = ref(sessionStorage.getItem('activeRoute') || 'home')
 const route = useRoute()
 
 const handleRoute = async (key: string) => {
@@ -41,13 +41,13 @@ const handleRoute = async (key: string) => {
   const parentKey = currentRouteMeta.parentKey as string
   const routeToSet = parentKey || key
   activeRoute.value = routeToSet
-  localStorage.setItem('activeRoute', routeToSet)
+  sessionStorage.setItem('activeRoute', routeToSet)
 }
 
 onMounted(() => {
   if (activeRoute.value === null) {
     activeRoute.value = 'home'
-    localStorage.setItem('activeRoute', 'home')
+    sessionStorage.setItem('activeRoute', 'home')
   }
 })
 

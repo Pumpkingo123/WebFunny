@@ -21,6 +21,7 @@ import { ref, watch, computed, onMounted, nextTick } from 'vue'
 
 interface Props {
   value: string | number
+  fetchDataPromise: Promise<void>
 }
 
 const props = defineProps<Props>()
@@ -59,7 +60,8 @@ watch(
   }
 )
 
-onMounted(() => {
+onMounted(async () => {
+  await props.fetchDataPromise
   setNumberTransform()
 })
 </script>

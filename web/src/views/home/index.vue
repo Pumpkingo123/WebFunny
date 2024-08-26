@@ -198,6 +198,8 @@ interface ProjectNums {
   count: number
 }
 
+const fetchDataPromise = ref<Promise<void> | null>(null)
+
 const fetchData = async () => {
   try {
     const params = {
@@ -274,7 +276,11 @@ const fetchNum = async () => {
   projectNums.value = responseNumList.data
   projects.value = projects.value.map((project) => {
     const projectNum = projectNums.value.find((p) => p.webMonitorId === project.webMonitorId)
-    if (projectNum) {
+    if (projectNum === undefined) {
+      console.log('projectNum is undefined', project.aliveNum)
+      project.aliveNum = 0
+    } else {
+      console.log('projectNum is undefined', project.aliveNum)
       project.aliveNum = projectNum.count
     }
     return project
@@ -282,8 +288,7 @@ const fetchNum = async () => {
 }
 
 onMounted(() => {
-  fetchData()
-  fetchNum()
+  fetchDataPromise.value = fetchData().then(() => fetchNum())
   // intervalId.value = setInterval(fetchNum, 4000)
 })
 

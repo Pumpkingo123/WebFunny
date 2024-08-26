@@ -1,20 +1,22 @@
 <template>
   <div class="w-full flex-grow bg-gray-100 relative">
-    <div class="mt-3 h-74 bg-white rounded-lg mx-5">
-      <div class="border-b-2 border-b-black-500 h-10">
+    <div class="mt-3 bg-white rounded-lg mx-5">
+      <div class="border-b-2 border-b-black-500 h-11">
         <div
           v-for="item in barItems"
+          :key="item.key"
           :class="[
             'inline-block text-lg text-center cursor-pointer mt-2 mr-12 ml-3 relative',
             { 'text-orange-500 active-tab': item.key === activeKey }
           ]"
           @click="handleMenuChange(item.key, $event)"
+          ref="menuItems"
         >
           {{ item.label }}
         </div>
         <span
           ref="indicatorRef"
-          class="absolute top-[50px] left-0 h-1 bg-orange-500"
+          class="absolute top-13.5 left-0 h-1 bg-orange-500"
           style="
             transition:
               left 0.3s ease,
@@ -24,7 +26,7 @@
       </div>
       <div class="w-full h-10 mt-1 flex justify-between">
         <div class="w-35 ml-4 flex flex-row justify-between">
-          <div class="h-full w-20 items-center flex text-lg">时间范围</div>
+          <div class="h-full w-18 items-center flex text-lg">时间范围</div>
           <div class="w-10 flex items-center text-lg">{{ rangeLabel }}</div>
         </div>
         <div class="hh w-65 mr-4" color="red">
@@ -34,7 +36,7 @@
           />
         </div>
       </div>
-      <div style="height: 100%; width: 100%; background-color: white">
+      <div style="height: 18rem; width: 100%; background-color: white">
         <chart
           :labels="labels"
           :lineData1="onErrorPerData"
@@ -61,11 +63,15 @@
         />
       </div>
     </div>
+    <div class="gap-5 mt-3 mx-4 h-100 flex mb-2 justify-between">
+      <div class="bg-white w-1/2 h-full rounded-lg"></div>
+      <div class="bg-white w-1/2 h-full rounded-lg"></div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 import { barItems } from '@/config/jsErrorBar'
 import { generateLabels } from '@/utils/generateLabels'
 import { getJsData } from '@/api/columnBar'
@@ -87,6 +93,8 @@ const consoleErrorPerData = ref<number[]>([])
 const labels = ref<string[]>([])
 const borderColor = ref<string>('')
 const backgroundColor = ref<string>('')
+
+const menuItems = ref<HTMLElement[]>([])
 
 const handleRangeLabelUpdate = (newRangeLabel: string) => {
   rangeLabel.value = newRangeLabel
@@ -140,5 +148,7 @@ watch(range, (newRange) => {
 onMounted(async () => {
   activeKey.value = barItem.value[0].key
   fetchDataPromise.value = fetchData()
+  await nextTick()
+  updateIndicatorPosition(menuItems.value[0])
 })
 </script>
