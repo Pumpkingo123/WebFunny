@@ -119,7 +119,7 @@ import {
 } from '@/api/health'
 import datePicker from '@/components/datePicker.vue'
 import { formatData } from '@/utils/formatData'
-import { generateLabelsHour } from '@/utils/generateLabelsHour'
+import { generateLabels } from '@/utils/generateLabels'
 import { subDays } from 'date-fns'
 import Card from '@/views/overView/components/card.vue'
 import SProgress from '@/views/overView/components/s-progress.vue'
@@ -201,13 +201,15 @@ const fetchCard = async () => {
     const { today: jsToday, seven: jsSeven } = jsErrorCountByHour.data
     const { today: resourceToday, seven: resourceSeven } = resourceErrorCountByHour.data
     const { today: consoleToday, seven: consoleSeven } = javascriptConsoleErrorInfoListByHour.data
-    labels.value = generateLabelsHour(
+    labels.value = generateLabels(
       new Date(yesterday.setHours(now.getHours() + 1)).getTime(),
-      new Date(now.setHours(now.getHours() - 1)).getTime()
+      new Date(now.setHours(now.getHours() - 1)).getTime(),
+      'MM-dd HH','hour'
     )
-    labels2.value = generateLabelsHour(
+    labels2.value = generateLabels(
       new Date(subDays(lastWeek, 1).setHours(now.getHours() + 2)).getTime(),
-      new Date(lastWeek.setHours(now.getHours() - 1)).getTime()
+      new Date(lastWeek.setHours(now.getHours() - 1)).getTime(),
+      'MM-dd HH','hour'
     )
     httpErrorCount.value = formatData(httpToday, labels.value, 'hour')
     httpErrorCount7.value = formatData(httpSeven, labels2.value, 'hour')

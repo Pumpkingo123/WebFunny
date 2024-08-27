@@ -1,7 +1,7 @@
 <template>
   <div class="flex">
     <div v-for="(item, index) in numberList" :key="index" class="flex w-5">
-      <span v-if="isNaN(item)">{{ item }}</span>
+      <span v-if="isNaN(Number(item))">{{ item }}</span>
       <div class="number">
         <span
           class="number-item text-xl text-yellow font-bold"
@@ -21,7 +21,7 @@ import { ref, watch, computed, onMounted, nextTick } from 'vue'
 
 interface Props {
   value: string | number
-  fetchDataPromise: Promise<void>
+  fetchDataPromise: Promise<unknown> | undefined
 }
 
 const props = defineProps<Props>()

@@ -49,108 +49,12 @@
       </div>
     </div>
     <main class="flex flex-wrap justify-around p-1 mt-1.5">
-      <div
-        class="mx-5 rounded-2xl w-1/4 h-81 bg-rice mt-5"
+      <projectCard
         v-for="(project, index) in projects"
         :key="'large' + index"
-        @click="handleClick()"
-      >
-        <div class="w-full flex justify-between h-10 mb-[3px]">
-          <div class="ml-2 w-28 mt-1 flex items-center">{{ project.projectName }}</div>
-          <div class="mr-2 w-12 mt-1 flex justify-between items-center">
-            <n-icon size="20" color="#828594">
-              <BookmarksOutline />
-            </n-icon>
-            <n-icon size="20" color="#828594">
-              <SettingsOutline />
-            </n-icon>
-          </div>
-        </div>
-        <div class="rounded-xl flex justify-around mx-2 my-2 bg-white h-21">
-          <div class="bg-white w-1/3 h-full flex flex-col">
-            <div class="text-ssm flex justify-center h-5 mt-3">活跃用户数</div>
-            <div class="flex w-full justify-center mt-1">
-              <scrollNumber :value="project.aliveNum"></scrollNumber>
-            </div>
-          </div>
-          <div class="w-1/3 h-full">
-            <div class="text-ssm flex justify-center h-5 mt-3">用户总数</div>
-            <div class="flex w-full justify-center mt-1 text-lg font-bold">
-              {{ project.uvNum }}万
-            </div>
-          </div>
-          <div class="bg-white w-1/3 h-full">
-            <div class="text-ssm flex justify-center h-5 mt-3">新用户数</div>
-            <div class="flex w-full justify-center mt-1 text-lg font-bold">
-              {{ project.newUvNum }}万
-            </div>
-          </div>
-        </div>
-        <div class="rounded-xl mx-2 my-2 bg-white h-21 flex flex-row">
-          <div class="w-25 h-full ml-2 flex items-center justify-center">
-            <n-progress
-              type="dashboard"
-              style="width: 70px"
-              gap-position="bottom"
-              color="#fdad45"
-              :stroke-width="6"
-            >
-              <div style="text-align: center; font-size: 13px; margin-top: 25px; width: 40px">
-                <n-icon size="30" color="#fdad45">
-                  <ApertureOutline />
-                </n-icon>
-                健康
-              </div>
-            </n-progress>
-          </div>
-          <div class="w-full ml-3 flex-col h-full flex">
-            <div class="w-full flex h-10 leading-10 justify-center text-lg font-bold">健康分</div>
-            <div class="w-full flex h-full flex-col">
-              <div class="flex flex-row justify-between">
-                <div class="flex w-full text-ssm">js报错率 {{ project.jsErrorPer }}%</div>
-                <div class="flex w-full text-ssm">自定义异常率 {{ project.consoleErrorPer }}%</div>
-              </div>
-              <div class="flex flex-row justify-between">
-                <div class="flex w-full text-ssm">接口报错率 {{ project.apiErrorPer }}%</div>
-                <div class="flex w-full text-ssm">
-                  静态资源报错率 {{ project.resourceErrorPer }}%
-                </div>
-              </div>
-            </div>
-            <div></div>
-          </div>
-        </div>
-        <div class="rounded-xl mx-2 my-1 flex flex-row bg-white h-21">
-          <div class="w-25 h-full ml-2 flex items-center justify-center">
-            <n-progress
-              type="dashboard"
-              style="width: 70px"
-              gap-position="bottom"
-              color="#fe6860"
-              :stroke-width="6"
-            >
-              <div style="text-align: center; font-size: 13px; margin-top: 25px; width: 40px">
-                <n-icon size="30" color="#fe6860">
-                  <BonfireOutline />
-                </n-icon>
-                性能
-              </div>
-            </n-progress>
-          </div>
-          <div class="w-full ml-3 flex-col h-full flex">
-            <div class="w-full flex h-10 leading-10 justify-center text-lg font-bold">性能分</div>
-            <div class="w-full flex h-full flex-col">
-              <div class="flex flex-row justify-between">
-                <div class="flex w-full text-ssm">页面秒开率 {{ project.pageSecondOpenRate }}%</div>
-                <div class="flex w-full text-ssm">页面跳出率 {{ project.customerLeaveRate }}%</div>
-              </div>
-              <div class="flex flex-row justify-between">
-                <div class="flex w-full text-ssm">接口秒开率 {{ project.httpSecondOpenRate }}%</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        :project="project"
+        :fetchDataPromise="fetchDataPromise"
+      />
     </main>
   </div>
 </template>
@@ -163,19 +67,22 @@ import {
   getAliveCusInRealTime,
   getProjectInfoInRealTime
 } from '@/api/home'
-import {
-  SettingsOutline,
-  BookmarksOutline,
-  ApertureOutline,
-  BonfireOutline
-} from '@vicons/ionicons5'
-import scrollNumber from '@/components/scrollNumber.vue'
 import router from '@/routers/index'
+import projectCard from './components/projectCard.vue.vue'
 
 const serachValue = ref('')
 const projects = ref<Project[]>([])
 const projectNums = ref<ProjectNums[]>([])
 const intervalId = ref<ReturnType<typeof setInterval> | null>(null)
+const envValue = ref('')
+const teamValue = ref('')
+const appTypeValue = ref('')
+const appStatusValue = ref('')
+
+const envOptions = []
+const teamOptions = []
+const appTypeOptions = []
+const appStatusOptions = []
 
 interface Project {
   webMonitorId: string
@@ -198,7 +105,7 @@ interface ProjectNums {
   count: number
 }
 
-const fetchDataPromise = ref<Promise<void> | null>(null)
+const fetchDataPromise = ref<Promise<unknown> | undefined>(undefined)
 
 const fetchData = async () => {
   try {
@@ -289,7 +196,6 @@ const fetchNum = async () => {
 
 onMounted(() => {
   fetchDataPromise.value = fetchData().then(() => fetchNum())
-  // intervalId.value = setInterval(fetchNum, 4000)
 })
 
 onUnmounted(() => {

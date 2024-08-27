@@ -66,7 +66,7 @@ const renderCustomSection = (section) => {
         display: 'flex',
         alignItems: 'center',
         padding: '8px 12px',
-        backgroundColor: hovering.value ? '#e0e0e0' : 'transparent'
+        backgroundColor: hovering.value ? '#e6f7ff' : 'transparent'
       },
       onClick: () => handleRoute(section.key),
       onMouseenter: () => {

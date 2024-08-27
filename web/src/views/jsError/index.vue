@@ -1,29 +1,7 @@
 <template>
   <div class="w-full flex-grow bg-gray-100 relative">
     <div class="mt-3 bg-white rounded-lg mx-5">
-      <div class="border-b-2 border-b-black-500 h-11">
-        <div
-          v-for="item in barItems"
-          :key="item.key"
-          :class="[
-            'inline-block text-lg text-center cursor-pointer mt-2 mr-12 ml-3 relative',
-            { 'text-orange-500 active-tab': item.key === activeKey }
-          ]"
-          @click="handleMenuChange(item.key, $event)"
-          ref="menuItems"
-        >
-          {{ item.label }}
-        </div>
-        <span
-          ref="indicatorRef"
-          class="absolute top-13.5 left-0 h-1 bg-orange-500"
-          style="
-            transition:
-              left 0.3s ease,
-              width 0.3s ease;
-          "
-        ></span>
-      </div>
+      <TabBar :barItems="barItems" :activeKey="activeKey" @menuChange="handleMenuChange" />
       <div class="w-full h-10 mt-1 flex justify-between">
         <div class="w-35 ml-4 flex flex-row justify-between">
           <div class="h-full w-18 items-center flex text-lg">时间范围</div>
@@ -44,6 +22,7 @@
           :barData1="onErrorData"
           :barData2="consoleErrorData"
           :range="range"
+          :name="'allCount'"
           :yAxisIDBar="'y1'"
           :yAxisIDLine="'y2'"
           :fetchDataPromise="fetchDataPromise"
@@ -64,7 +43,28 @@
       </div>
     </div>
     <div class="gap-5 mt-3 mx-4 h-100 flex mb-2 justify-between">
-      <div class="bg-white w-1/2 h-full rounded-lg"></div>
+      <div class="bg-white w-1/2 h-full rounded-lg">
+        <div class="w-full h-10 flex flex-row justify-between">
+          <div class="h-full leading-10 ml-3 text-base">JS错误（onerror）</div>
+          <div class="h-full leading-10 mr-3">{{ formattedDate }}</div>
+        </div>
+        <div class="w-full h-60">
+          <chart
+            :labels="labels1"
+            :barData1="jsErrorData"
+            :name="'jsCount'"
+            :yAxisIDBar="'y1'"
+            :fetchDataPromise="fetchDataPromise"
+            :chartColors="{
+              barCol1: '#3695ff'
+            }"
+            :chartLabels="{
+              barDes1: '错误量'
+            }"
+            chartType="bar"
+          />
+        </div>
+      </div>
       <div class="bg-white w-1/2 h-full rounded-lg"></div>
     </div>
   </div>
@@ -74,13 +74,12 @@
 import { ref, onMounted, watch, nextTick } from 'vue'
 import { barItems } from '@/config/jsErrorBar'
 import { generateLabels } from '@/utils/generateLabels'
-import { getJsData } from '@/api/columnBar'
+import { getJsData, getJsErrorCountListByHour, getJsErrorSortInfo } from '@/api/jsError'
 import { formatData } from '@/utils/formatData'
 import { format } from 'date-fns'
 import dataRangePicker from '@/components/dateRangePicker.vue'
 import Chart from '@/components/chart.vue'
 
-const indicatorRef = ref<HTMLElement | null>(null)
 const activeKey = ref('over')
 const barItem = ref(barItems)
 const range = ref<number[]>([0, Date.now()])
@@ -90,11 +89,14 @@ const onErrorData = ref<number[]>([])
 const consoleErrorData = ref<number[]>([])
 const onErrorPerData = ref<number[]>([])
 const consoleErrorPerData = ref<number[]>([])
+const jsErrorData = ref<number[]>([])
 const labels = ref<string[]>([])
+const labels1 = ref<string[]>([])
+const labels2 = ref<string[]>([])
 const borderColor = ref<string>('')
 const backgroundColor = ref<string>('')
-
-const menuItems = ref<HTMLElement[]>([])
+const now = new Date()
+const formattedDate = ref(format(now, 'dd/MM/yyyy'))
 
 const handleRangeLabelUpdate = (newRangeLabel: string) => {
   rangeLabel.value = newRangeLabel
@@ -104,40 +106,33 @@ const handleRangeUpdate = (newRange: number[]) => {
   range.value = newRange
 }
 
-// Function to update the position of the indicator
-const updateIndicatorPosition = (element: HTMLElement) => {
-  const rect = element.getBoundingClientRect()
-  const parentRect = element.parentElement!.getBoundingClientRect()
-  const newLeft = rect.left - parentRect.left
-  if (indicatorRef.value) {
-    indicatorRef.value.style.left = `${newLeft + 20}px`
-    indicatorRef.value.style.width = `${rect.width}px`
-  }
-}
-
-// Function to handle menu changes
 const handleMenuChange = (key: string, event: MouseEvent) => {
   activeKey.value = key
-  updateIndicatorPosition(event.target as HTMLElement)
 }
 
 const fetchData = async () => {
   const startDate = format(new Date(range.value[0]), 'yyyy-MM-dd')
   const endDate = format(new Date(range.value[1]), 'yyyy-MM-dd')
-  const response = await getJsData(startDate, endDate, rangeLabel.value)
-  if (response.code === 200 && response.data) {
-    const { onError, consoleError, onErrorPer, consoleErrorPer } = response.data
-    // Update the reactive labels variable
-    labels.value = generateLabels(range.value[0], range.value[1])
-    onErrorData.value = formatData(onError, labels.value, 'day')
-    consoleErrorData.value = formatData(consoleError, labels.value, 'day')
-    onErrorPerData.value = formatData(onErrorPer, labels.value, 'day')
-    consoleErrorPerData.value = formatData(consoleErrorPer, labels.value, 'day')
-    borderColor.value = '#2cdd96'
-    backgroundColor.value = '#2cdd96'
-  } else {
-    console.error('Failed to fetch data')
-  }
+  const [allData, jsData] = await Promise.all([
+    getJsData(startDate, endDate, rangeLabel.value),
+    getJsErrorCountListByHour({ timeType: 0, webMonitorId: '1' })
+  ])
+  const { onError, consoleError, onErrorPer, consoleErrorPer } = allData.data
+  const { onError: jsData1 } = jsData.data
+  labels.value = generateLabels(range.value[0], range.value[1])
+  labels1.value = generateLabels(
+    now.setHours(0, 0, 0, 0),
+    now.setHours(21, 0, 0, 0),
+    'HH:mm',
+    'hour'
+  )
+  jsErrorData.value = formatData(jsData1, labels1.value, 'hour')
+  onErrorData.value = formatData(onError, labels.value, 'day')
+  consoleErrorData.value = formatData(consoleError, labels.value, 'day')
+  onErrorPerData.value = formatData(onErrorPer, labels.value, 'day')
+  consoleErrorPerData.value = formatData(consoleErrorPer, labels.value, 'day')
+  borderColor.value = '#2cdd96'
+  backgroundColor.value = '#2cdd96'
 }
 
 watch(range, (newRange) => {
@@ -149,6 +144,5 @@ onMounted(async () => {
   activeKey.value = barItem.value[0].key
   fetchDataPromise.value = fetchData()
   await nextTick()
-  updateIndicatorPosition(menuItems.value[0])
 })
 </script>

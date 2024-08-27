@@ -37,65 +37,66 @@
         </div>
       </div>
     </div>
-  </n-spin>
-  <div class="h-60 mx-4 mt-4 bg-white rounded-lg">
-    <div class="w-full h-10 ml-3 pt-2 flex flex-row">
-      <div class="text-base mt-5">用户量统计</div>
-      <div class="w-30 h-7 mt-4 ml-4 flex flex-row">
-        <n-button
-          :class="[
-            selectedButton === '30天' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500'
-          ]"
-          @click="selectButton('30天')"
-        >
-          30天
-        </n-button>
-        <n-button
-          :class="[
-            selectedButton === '90天' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500'
-          ]"
-          @click="selectButton('90天')"
-        >
-          90天
-        </n-button>
-        <n-button
-          :class="[
-            selectedButton === '半年' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500'
-          ]"
-          @click="selectButton('半年')"
-        >
-          半年
-        </n-button>
-        <n-button
-          :class="[
-            selectedButton === '一年' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500'
-          ]"
-          @click="selectButton('一年')"
-        >
-          一年
-        </n-button>
+
+    <div class="h-60 mx-4 mt-4 bg-white rounded-lg">
+      <div class="w-full h-10 ml-3 pt-2 flex flex-row">
+        <div class="text-base mt-5">用户量统计</div>
+        <div class="w-30 h-7 mt-4 ml-4 flex flex-row">
+          <n-button
+            :class="[
+              selectedButton === '30天' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500'
+            ]"
+            @click="selectButton('30天')"
+          >
+            30天
+          </n-button>
+          <n-button
+            :class="[
+              selectedButton === '90天' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500'
+            ]"
+            @click="selectButton('90天')"
+          >
+            90天
+          </n-button>
+          <n-button
+            :class="[
+              selectedButton === '半年' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500'
+            ]"
+            @click="selectButton('半年')"
+          >
+            半年
+          </n-button>
+          <n-button
+            :class="[
+              selectedButton === '一年' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500'
+            ]"
+            @click="selectButton('一年')"
+          >
+            一年
+          </n-button>
+        </div>
       </div>
+      <chart
+        class="pt-8"
+        :labels="labels"
+        :name="'userCount'"
+        :barData1="newUVData"
+        :barData2="UVData"
+        :yAxisIDBar="'y1'"
+        :range="range"
+        :fetchDataPromise="fetchData1Promise"
+        :chartColors="{
+          barCol1: '#ff8639',
+          barCol2: '#ffddc7'
+        }"
+        :chartLabels="{
+          barDes1: '新用户数',
+          barDes2: '老用户数'
+        }"
+        chartType="bar"
+      />
     </div>
-    <chart
-      class="pt-8"
-      :labels="labels"
-      :name="'userCount'"
-      :barData1="newUVData"
-      :barData2="UVData"
-      :yAxisIDBar="'y1'"
-      :range="range"
-      :fetchDataPromise="fetchData1Promise"
-      :chartColors="{
-        barCol1: '#ff8639',
-        barCol2: '#ffddc7'
-      }"
-      :chartLabels="{
-        barDes1: '新用户数',
-        barDes2: '老用户数'
-      }"
-      chartType="bar"
-    />
-  </div>
+  </n-spin>
   <div class="h-160 flex flex-row flex-wrap justify-between mt-14 rounded-lg mx-4 mb-10">
     <Card
       class="mr-4"
@@ -189,7 +190,6 @@ import {
 import { subDays } from 'date-fns'
 import { formatData } from '@/utils/formatData'
 import { generateLabels } from '@/utils/generateLabels'
-import { generateLabelsHour } from '@/utils/generateLabelsHour'
 import Chart from '@/components/chart.vue'
 import Card from '@/views/overView/components/card.vue'
 
@@ -300,13 +300,17 @@ const fetchHourData = async () => {
     const { today: newCustomerToday, seven: newCustomerSeven } = newCustomerData.data
     const { today: uvToday, seven: uvSeven } = uvData.data
     const { today: leaveToday, seven: leaveSeven } = leaveData.data
-    labels2.value = generateLabelsHour(
+    labels2.value = generateLabels(
       new Date(yesterday.setHours(now.getHours() + 1)).getTime(),
-      new Date(now.setHours(now.getHours() - 1)).getTime()
+      new Date(now.setHours(now.getHours() - 1)).getTime(),
+      'MM-dd HH',
+      'hour'
     )
-    labels3.value = generateLabelsHour(
+    labels3.value = generateLabels(
       new Date(subDays(lastWeek, 1).setHours(now.getHours() + 2)).getTime(),
-      new Date(lastWeek.setHours(now.getHours() - 1)).getTime()
+      new Date(lastWeek.setHours(now.getHours() - 1)).getTime(),
+      'MM-dd HH',
+      'hour'
     )
     PvCount.value = formatData(pvToday, labels2.value, 'hour')
     PvCount7.value = formatData(pvSeven, labels3.value, 'hour')

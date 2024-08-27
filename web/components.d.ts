@@ -41,5 +41,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScrollNumber: typeof import('./src/components/scrollNumber.vue')['default']
+    TabBar: typeof import('./src/components/tabBar.vue')['default']
   }
 }
