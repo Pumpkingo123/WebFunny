@@ -17,10 +17,8 @@
       <div style="height: 18rem; width: 100%; background-color: white">
         <chart
           :labels="labels"
-          :lineData1="onErrorPerData"
-          :lineData2="consoleErrorPerData"
-          :barData1="onErrorData"
-          :barData2="consoleErrorData"
+          :lineData="[onErrorPerData, consoleErrorPerData]"
+          :barData="[onErrorData, consoleErrorData]"
           :range="range"
           :name="'allCount'"
           :yAxisIDBar="'y1'"
@@ -42,7 +40,7 @@
         />
       </div>
     </div>
-    <div class="gap-5 mt-3 mx-4 h-100 flex mb-2 justify-between">
+    <div class="gap-5 mt-3 mx-4 h-75 flex mb-2 justify-between">
       <div class="bg-white w-1/2 h-full rounded-lg">
         <div class="w-full h-10 flex flex-row justify-between">
           <div class="h-full leading-10 ml-3 text-base">JS错误（onerror）</div>
@@ -51,7 +49,7 @@
         <div class="w-full h-60">
           <chart
             :labels="labels1"
-            :barData1="jsErrorData"
+            :barData="[jsErrorData]"
             :name="'jsCount'"
             :yAxisIDBar="'y1'"
             :fetchDataPromise="fetchDataPromise"
@@ -65,7 +63,27 @@
           />
         </div>
       </div>
-      <div class="bg-white w-1/2 h-full rounded-lg"></div>
+      <div class="bg-white w-1/2 h-full rounded-lg">
+        <div class="w-full h-10 flex flex-row justify-between">
+          <div class="h-full leading-10 ml-3 text-base">自定义异常（consoleError）</div>
+          <div class="h-full leading-10 mr-3">{{ formattedDate }}</div>
+        </div>
+        <div class="w-full h-60">
+          <chart
+            :labels="labels1"
+            :barData="[consoleData]"
+            :name="'consoleCount'"
+            :yAxisIDBar="'y1'"
+            :fetchDataPromise="fetchDataPromise"
+            :chartColors="{
+              barCol1: '#7a79ff'
+            }"
+            :chartLabels="{
+              barDes1: '错误量'
+            }"
+            chartType="bar"
+          />
+        </div></div>
     </div>
   </div>
 </template>
@@ -74,7 +92,7 @@
 import { ref, onMounted, watch, nextTick } from 'vue'
 import { barItems } from '@/config/jsErrorBar'
 import { generateLabels } from '@/utils/generateLabels'
-import { getJsData, getJsErrorCountListByHour, getJsErrorSortInfo } from '@/api/jsError'
+import { getJsData, getJsErrorCountListByHour } from '@/api/jsError'
 import { formatData } from '@/utils/formatData'
 import { format } from 'date-fns'
 import dataRangePicker from '@/components/dateRangePicker.vue'
@@ -90,9 +108,9 @@ const consoleErrorData = ref<number[]>([])
 const onErrorPerData = ref<number[]>([])
 const consoleErrorPerData = ref<number[]>([])
 const jsErrorData = ref<number[]>([])
+const consoleData = ref<number[]>([])
 const labels = ref<string[]>([])
 const labels1 = ref<string[]>([])
-const labels2 = ref<string[]>([])
 const borderColor = ref<string>('')
 const backgroundColor = ref<string>('')
 const now = new Date()
@@ -118,7 +136,7 @@ const fetchData = async () => {
     getJsErrorCountListByHour({ timeType: 0, webMonitorId: '1' })
   ])
   const { onError, consoleError, onErrorPer, consoleErrorPer } = allData.data
-  const { onError: jsData1 } = jsData.data
+  const { onError: jsData1, consoleError: consoleData1 } = jsData.data
   labels.value = generateLabels(range.value[0], range.value[1])
   labels1.value = generateLabels(
     now.setHours(0, 0, 0, 0),
@@ -127,6 +145,7 @@ const fetchData = async () => {
     'hour'
   )
   jsErrorData.value = formatData(jsData1, labels1.value, 'hour')
+  consoleData.value = formatData(consoleData1, labels1.value, 'hour')
   onErrorData.value = formatData(onError, labels.value, 'day')
   consoleErrorData.value = formatData(consoleError, labels.value, 'day')
   onErrorPerData.value = formatData(onErrorPer, labels.value, 'day')

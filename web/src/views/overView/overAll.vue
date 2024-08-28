@@ -80,8 +80,7 @@
         class="pt-8"
         :labels="labels"
         :name="'userCount'"
-        :barData1="newUVData"
-        :barData2="UVData"
+        :barData=[newUVData,UVData]
         :yAxisIDBar="'y1'"
         :range="range"
         :fetchDataPromise="fetchData1Promise"
@@ -103,8 +102,7 @@
       title="页面访问量趋势"
       name="userCount1"
       :labels="labels2"
-      :lineData1="PvCount"
-      :lineData2="PvCount7"
+      :lineData=[PvCount,PvCount7]
       yAxisIDLine="y1"
       :fetchDataPromise="fetchData2Promise"
       :chartColors="{
@@ -122,8 +120,7 @@
       title="用户活跃量趋势"
       name="userCount2"
       :labels="labels2"
-      :lineData1="UvCount"
-      :lineData2="UvCount7"
+      :lineData=[UvCount,UvCount7]
       yAxisIDLine="y1"
       :fetchDataPromise="fetchData2Promise"
       :chartColors="{
@@ -141,8 +138,7 @@
       title="新用户活跃量趋势"
       name="userCount3"
       :labels="labels2"
-      :lineData1="NewCustomerCount"
-      :lineData2="NewCustomerCount7"
+      :lineData=[NewCustomerCount,NewCustomerCount7]
       yAxisIDLine="y1"
       :fetchDataPromise="fetchData2Promise"
       :chartColors="{
@@ -160,8 +156,7 @@
       title="跳出率趋势"
       name="userCount4"
       :labels="labels2"
-      :lineData1="CusLeavePercent"
-      :lineData2="CusLeavePercent7"
+      :lineData=[CusLeavePercent,CusLeavePercent7]
       yAxisIDLine="y1"
       :fetchDataPromise="fetchData2Promise"
       :chartColors="{

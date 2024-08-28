@@ -12,12 +12,12 @@
           <n-icon size="30" color="#fdad45">
             <ApertureOutline />
           </n-icon>
-          {{iconTitle}}
+
         </div>
       </n-progress>
     </div>
     <div class="w-full ml-3 flex-col h-full flex">
-      <div class="w-full flex h-10 leading-10 justify-center text-lg font-bold">{{ iconTitle }}分</div>
+      
       <div class="w-full flex h-full flex-col">
         <div class="flex flex-row justify-between">
           <div class="flex w-full text-ssm">js报错率 {{ project.jsErrorPer }}%</div>
@@ -34,13 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
-import {
-  getDetailData,
-  getProjectInfoListInRealTime,
-  getAliveCusInRealTime,
-  getProjectInfoInRealTime
-} from '@/api/home'
+import { defineProps } from 'vue'
 
 const project = defineProps<{
   jsErrorPer: number

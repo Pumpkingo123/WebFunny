@@ -17,8 +17,8 @@
       <div style="height: 12rem; width: 100%; background-color: white">
         <chart
           :labels="labels"
-          :lineData1="httpPerError"
-          :barData1="httpError"
+          :lineData=[httpPerError]
+          :barData=[httpError]
           :range="range"
           :name="'allCount'"
           :yAxisIDBar="'y1'"
@@ -30,13 +30,30 @@
           }"
           :chartLabels="{
             lineDes1: '错误率',
-            barDes1: '发生错误',
+            barDes1: '发生错误'
           }"
           chartType="combined"
         />
       </div>
       <div class="mt-4 ml-4 text-lg font-bold">今日概况（{{ formattedDate }}）</div>
-      <div></div>
+      <div class="flex ml-4 gap-5 items-center h-40">
+        <div
+          v-for="(status, index) in ProjectStatus"
+          :key="index"
+          class="flex justify-center items-center bg-white rounded-lg gap-5 bg-gray-100 h-30 w-50"
+          :class="`bg-${status.color}-100`"
+        >
+          <div
+            :class="`bg-gradient-to-r from-${status.color}-500 to-${status.color}-200 text-white w-15 h-15 rounded-full flex items-center font-bold justify-center text-base font-medium`"
+          >
+            {{ status.status }}
+          </div>
+          <div class="flex-col flex justify-center items-center">
+            <div class="text-3xl font-bold">{{ status.count }}</div>
+            <div class="text-gray-600 text-ssm text-gray-500">发生次数</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -59,8 +76,15 @@ const httpError = ref<number[]>([])
 const httpPerError = ref<number[]>([])
 const barItem = ref(barItems)
 const fetchDataPromise = ref<Promise<unknown> | undefined>(undefined)
-  const now = new Date()
+const now = new Date()
+const ProjectStatus = ref<Status[]>([])
 const formattedDate = ref(format(now, 'MM-dd'))
+
+type Status = {
+  status: String;
+  count: Number;
+  color: String;
+};
 
 const handleMenuChange = (key: string, event: MouseEvent) => {
   activeKey.value = key
@@ -86,6 +110,13 @@ const fetchData = async () => {
   httpError.value = formatData(data, labels.value, 'day')
   httpPerError.value = formatData(perData, labels.value, 'day')
   const { data: statusListGroup } = statusListGroupByErrorCode
+  ProjectStatus.value = statusListGroup
+  const colors = ['blue', 'blue', 'red', 'red']
+  ProjectStatus.value = statusListGroup.map((status, index) => ({
+    ...status,
+    color: colors[index]
+  }))
+  console.log(ProjectStatus.value)
 }
 
 onMounted(async () => {

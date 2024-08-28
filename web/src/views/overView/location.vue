@@ -6,8 +6,8 @@
     <div class="w-2/3 h-full bg-white rounded-t-lg flex flex-row justify-between">
       <div class="text-lg pl-4 pt-3">用户地域分布图</div>
       <div class="w-35 flex flex-row justify-between mr-4 mt-2">
-        <n-button @click="handleClick">中国</n-button>
-        <n-button @click="handleClick">全球</n-button>
+        <n-button>中国</n-button>
+        <n-button>全球</n-button>
       </div>
     </div>
     <div class="w-1/3 h-full bg-white rounded-t-lg pl-4 pt-3 text-lg">访问用户省份分布TOP榜</div>
@@ -46,8 +46,13 @@ import { provinceConfig } from '@/config/provinceConfig'
 const timestamp = ref<number>(0)
 const timeSize = ref<number>(0)
 const data = ref([])
-const tableData = ref([])
+const tableData = ref<table[]>([])
 const now = new Date()
+
+type table = {
+  name: string
+  value: number
+}
 
 const handleDateUpdate = (newDate: number) => {
   timestamp.value = newDate

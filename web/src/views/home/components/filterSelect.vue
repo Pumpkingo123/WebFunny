@@ -5,7 +5,6 @@
         class="w-30 h-8"
         v-model="value"
         placeholder=""
-        :options="options"
         @update:value="handleUpdateValue"
       />
     </div>

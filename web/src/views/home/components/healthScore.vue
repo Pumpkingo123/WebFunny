@@ -20,12 +20,12 @@
         <div class="w-full flex h-10 leading-10 justify-center text-lg font-bold">健康分</div>
         <div class="w-full flex h-full flex-col">
           <div class="flex flex-row justify-between">
-            <div class="flex w-full text-ssm">js报错率 {{ project?.jsErrorPer }}%</div>
-            <div class="flex w-full text-ssm">自定义异常率 {{ project?.consoleErrorPer }}%</div>
+            <div class="flex w-full text-sm">js报错率 {{ project?.jsErrorPer }}%</div>
+            <div class="flex w-full text-sm">自定义异常率 {{ project?.consoleErrorPer }}%</div>
           </div>
           <div class="flex flex-row justify-between">
-            <div class="flex w-full text-ssm">接口报错率 {{ project?.apiErrorPer }}%</div>
-            <div class="flex w-full text-ssm">
+            <div class="flex w-full text-sm">接口报错率 {{ project?.apiErrorPer }}%</div>
+            <div class="flex w-full text-sm">
               静态资源报错率 {{ project?.resourceErrorPer }}%
             </div>
           </div>

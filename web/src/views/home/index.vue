@@ -5,43 +5,19 @@
       <div class="h-full w-210 ml-45 flex justify-around items-center">
         <div class="mr-0 bg-white flex flex-row items-center">
           <div class="w-16 h-8 flex justify-center items-center text-gray-300">环境</div>
-          <n-select
-            class="w-30 h-8"
-            v-model="value"
-            placeholder=""
-            :options="envOptions"
-            @update:value="handleUpdateValue"
-          />
+          <n-select class="w-30 h-8" placeholder="" :options="envOptions" />
         </div>
         <div class="mr-0 bg-white flex flex-row items-center">
           <div class="w-16 h-8 flex justify-center items-center text-gray-300">团队列表</div>
-          <n-select
-            class="w-30 h-8"
-            v-model="value"
-            placeholder=""
-            :options="envOptions"
-            @update:value="handleUpdateValue"
-          />
+          <n-select class="w-30 h-8" placeholder="" :options="envOptions" />
         </div>
         <div class="mr-0 bg-white flex flex-row items-center">
           <div class="w-16 h-8 flex justify-center items-center text-gray-300">应用类型</div>
-          <n-select
-            class="w-30 h-8"
-            v-model="value"
-            placeholder=""
-            :options="envOptions"
-            @update:value="handleUpdateValue"
-          />
+          <n-select class="w-30 h-8" placeholder="" :options="envOptions" />
         </div>
         <div class="mr-0 bg-white flex flex-row items-center">
           <div class="w-16 h-8 flex justify-center items-center text-gray-300">应用状态</div>
-          <n-select
-            class="w-30 h-8"
-            v-model="value"
-            placeholder=""
-            :options="envOptions"
-            @update:value="handleUpdateValue"
-          />
+          <n-select class="w-30 h-8" placeholder="" :options="envOptions" />
         </div>
       </div>
       <div>
@@ -54,6 +30,7 @@
         :key="'large' + index"
         :project="project"
         :fetchDataPromise="fetchDataPromise"
+        :click="handleClick"
       />
     </main>
   </div>
@@ -74,15 +51,7 @@ const serachValue = ref('')
 const projects = ref<Project[]>([])
 const projectNums = ref<ProjectNums[]>([])
 const intervalId = ref<ReturnType<typeof setInterval> | null>(null)
-const envValue = ref('')
-const teamValue = ref('')
-const appTypeValue = ref('')
-const appStatusValue = ref('')
-
 const envOptions = []
-const teamOptions = []
-const appTypeOptions = []
-const appStatusOptions = []
 
 interface Project {
   webMonitorId: string
@@ -194,8 +163,13 @@ const fetchNum = async () => {
   })
 }
 
+const setupInterval = () => {
+  intervalId.value = setInterval(fetchNum, 5000)
+}
+
 onMounted(() => {
   fetchDataPromise.value = fetchData().then(() => fetchNum())
+  // setupInterval()
 })
 
 onUnmounted(() => {

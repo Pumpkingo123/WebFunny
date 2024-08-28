@@ -20,11 +20,11 @@
         <div class="w-full flex h-10 leading-10 justify-center text-lg font-bold">性能分</div>
         <div class="w-full flex h-full flex-col">
           <div class="flex flex-row justify-between">
-            <div class="flex w-full text-ssm">页面秒开率 {{ project?.pageSecondOpenRate }}%</div>
-            <div class="flex w-full text-ssm">页面跳出率 {{ project?.customerLeaveRate }}%</div>
+            <div class="flex w-full text-sm">页面秒开率 {{ project?.pageSecondOpenRate }}%</div>
+            <div class="flex w-full text-sm">页面跳出率 {{ project?.customerLeaveRate }}%</div>
           </div>
           <div class="flex flex-row justify-between">
-            <div class="flex w-full text-ssm">接口秒开率 {{ project?.httpSecondOpenRate }}%</div>
+            <div class="flex w-full text-sm">接口秒开率 {{ project?.httpSecondOpenRate }}%</div>
           </div>
         </div>
       </div>

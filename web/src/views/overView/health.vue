@@ -30,8 +30,7 @@
       title="js报错趋势"
       name="userCount1"
       :labels="labels"
-      :lineData1="httpErrorCount"
-      :lineData2="httpErrorCount7"
+      :lineData=[httpErrorCount,httpErrorCount7]
       yAxisIDLine="y1"
       :range="timestamp"
       :fetchDataPromise="fetchDataPromise"
@@ -51,8 +50,7 @@
       name="userCount2"
       :labels="labels"
       :range="timestamp"
-      :lineData1="jsErrorCount"
-      :lineData2="jsErrorCount7"
+      :lineData=[jsErrorCount,jsErrorCount7]
       yAxisIDLine="y1"
       :fetchDataPromise="fetchDataPromise"
       :chartColors="{
@@ -71,8 +69,7 @@
       name="userCount3"
       :labels="labels"
       :range="timestamp"
-      :lineData1="resourceErrorCount"
-      :lineData2="resourceErrorCount7"
+      :lineData=[resourceErrorCount,resourceErrorCount7]
       yAxisIDLine="y1"
       :fetchDataPromise="fetchDataPromise"
       :chartColors="{
@@ -90,9 +87,8 @@
       title="接口请求报错"
       name="userCount4"
       :labels="labels"
-      :lineData1="consoleErrorCount"
+      :lineData=[consoleErrorCount,consoleErrorCount7]
       :range="timestamp"
-      :lineData2="consoleErrorCount7"
       yAxisIDLine="y1"
       :fetchDataPromise="fetchDataPromise"
       :chartColors="{
