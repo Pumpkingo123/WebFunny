@@ -1,13 +1,18 @@
 <template>
-  <n-date-picker v-model:value="range" type="daterange" clearable @update:value="updateRangeLabel" />
+  <n-date-picker
+    v-model:value="range"
+    type="daterange"
+    clearable
+    @update:value="updateRangeLabel"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { defineEmits } from 'vue'
-import { generateLabels } from '@/utils/generateLabels';
+import { generateLabels } from '@/utils/generateLabels'
 
-const emit = defineEmits(['update:rangeLabel','update:range'])
+const emit = defineEmits(['update:rangeLabel', 'update:range'])
 const range = ref<[number, number]>([1723135260000, Date.now()])
 const labels = ref<string[]>([])
 
@@ -27,5 +32,4 @@ const updateRangeLabel = () => {
 }
 
 watch(range, updateRangeLabel, { immediate: true })
-
 </script>
