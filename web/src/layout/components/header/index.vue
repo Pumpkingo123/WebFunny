@@ -43,7 +43,7 @@ const handleRoute = async (key: string) => {
   const parentKey = currentRouteMeta.parentKey as string
   const routeToSet = parentKey || key
   activeRoute.value = routeToSet
-  headerStore.setActiveKey(key)
+  headerStore.setActiveKey(parentKey)
 }
 
 onMounted(() => {

@@ -222,9 +222,9 @@ const fetchCard = async () => {
 
 const progressColor = computed(() => {
   if (score.value > 80) {
-    return '#ff9724'
-  } else if (score.value > 60) {
     return '#28c989'
+  } else if (score.value > 60) {
+    return '#ff9724'
   } else {
     return '#ff4e5c'
   }
