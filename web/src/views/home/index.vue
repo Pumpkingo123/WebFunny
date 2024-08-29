@@ -30,22 +30,21 @@
         :key="'large' + index"
         :project="project"
         :fetchDataPromise="fetchDataPromise"
-        :click="handleClick"
       />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, onUnmounted } from 'vue'
+import { onMounted, ref, onUnmounted, defineEmits } from 'vue'
 import {
   getDetailData,
   getProjectInfoListInRealTime,
   getAliveCusInRealTime,
   getProjectInfoInRealTime
 } from '@/api/home'
-import router from '@/routers/index'
 import projectCard from './components/projectCard.vue.vue'
+
 
 const serachValue = ref('')
 const projects = ref<Project[]>([])
@@ -127,10 +126,6 @@ const fetchData = async () => {
   } catch (error) {
     console.log(error)
   }
-}
-
-const handleClick = () => {
-  router.push({ name: 'overView' })
 }
 
 const fetchNum = async () => {

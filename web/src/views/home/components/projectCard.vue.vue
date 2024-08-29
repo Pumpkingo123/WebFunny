@@ -24,7 +24,9 @@
   import HealthScore from './healthScore.vue'
   import PerformanceScore from './performanceScore.vue'
   import router from '@/routers/index'
-  
+  import { useHeaderStore } from '@/stores/headerStore'
+
+  const headerStore = useHeaderStore()
   const props = defineProps({
     project: Object,
     fetchDataPromise: Promise
@@ -32,5 +34,6 @@
   
   const handleClick = () => {
     router.push({ name: 'overView' })
+    headerStore.setActiveKey('overView')
   }
   </script>

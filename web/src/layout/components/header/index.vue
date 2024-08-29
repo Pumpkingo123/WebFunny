@@ -8,7 +8,7 @@
         class="w-full h-full flex items-center justify-around"
         :options="menuOptions"
         @update:value="handleRoute"
-        v-model:value="activeRoute"
+        v-model:value="headerStore.activeRoute"
         mode="horizontal"
       />
     </div>
@@ -25,15 +25,17 @@
 </template>
 
 <script setup lang="ts">
-import { h, ref, reactive, onMounted } from 'vue'
+import { h, ref, reactive, onMounted, defineExpose } from 'vue'
 import { NAvatar, NText, NIcon } from 'naive-ui'
 import { DiamondOutline } from '@vicons/ionicons5'
 import router from '@/routers/index'
 import { useRoute } from 'vue-router'
 import { sections } from '@/config/headerConfig'
+import { useHeaderStore } from '@/stores/headerStore'
 
 const activeRoute = ref(sessionStorage.getItem('activeRoute') || 'home')
 const route = useRoute()
+const headerStore = useHeaderStore()
 
 const handleRoute = async (key: string) => {
   await router.push({ name: key })
@@ -41,7 +43,7 @@ const handleRoute = async (key: string) => {
   const parentKey = currentRouteMeta.parentKey as string
   const routeToSet = parentKey || key
   activeRoute.value = routeToSet
-  sessionStorage.setItem('activeRoute', routeToSet)
+  headerStore.setActiveKey(key)
 }
 
 onMounted(() => {
