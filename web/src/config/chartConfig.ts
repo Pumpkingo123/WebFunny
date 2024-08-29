@@ -14,6 +14,11 @@ export const defaultChartLabels = {
   barDes2: 'bar2'
 }
 
+export const defaultChartData = {
+  lineData: [0, 0, 0, 0, 0],
+  barData: [0, 0, 0, 0, 0]
+}
+
 export const createDataset = (
   type: 'line' | 'bar',
   label: string,
@@ -31,4 +36,25 @@ export const createDataset = (
   yAxisID
 })
 
-
+// 创建默认数据集
+export const createDefaultDatasets = (
+  yAxisIDLine: string | undefined,
+  yAxisIDBar: string | undefined
+): ChartDataset<'line' | 'bar'>[] => [
+  createDataset(
+    'line',
+    defaultChartLabels.lineDes1,
+    defaultChartData.lineData,
+    defaultChartColors.lineCol1,
+    defaultChartColors.lineCol1,
+    yAxisIDLine
+  ),
+  createDataset(
+    'bar',
+    defaultChartLabels.barDes1,
+    defaultChartData.barData,
+    defaultChartColors.barCol1,
+    defaultChartColors.barCol1,
+    yAxisIDBar
+  )
+]

@@ -140,7 +140,6 @@ const initializeChart = async () => {
           )
         }
       })
-
       console.log('new chart build')
       chartInstance = new Chart(ctx, {
         type: 'bar',

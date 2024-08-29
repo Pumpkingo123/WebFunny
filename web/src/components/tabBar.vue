@@ -4,7 +4,7 @@
       v-for="item in barItems"
       :key="item.key"
       :class="[
-        'inline-block text-lg h-10 text-center cursor-pointer mt-2 mr-12 ml-3 relative',
+        'inline-block text-lg h-10 text-center cursor-pointer mt-2 mr-12 ml-3 relative leading-10',
         { 'text-orange-500 active-tab': item.key === activeKey }
       ]"
       @click="handleMenuChange(item.key, $event)"
@@ -14,7 +14,7 @@
     </div>
     <span
       ref="indicatorRef"
-      class="absolute top-13.5 left-0 h-1 bg-orange-500"
+      class="absolute top-15 left-0 h-1 bg-orange-500"
       style="
         transition:
           left 0.3s ease,
@@ -49,7 +49,7 @@ const updateIndicatorPosition = (element: HTMLElement) => {
   const parentRect = element.parentElement!.getBoundingClientRect()
   const newLeft = rect.left - parentRect.left
   if (indicatorRef.value) {
-    indicatorRef.value.style.left = `${newLeft+20}px`
+    indicatorRef.value.style.left = `${newLeft + 20}px`
     indicatorRef.value.style.width = `${rect.width}px`
   }
 }

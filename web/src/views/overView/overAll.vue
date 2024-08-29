@@ -43,6 +43,7 @@
         <div class="text-base mt-5">用户量统计</div>
         <div class="w-30 h-7 mt-4 ml-4 flex flex-row">
           <n-button
+            class="view"
             :class="[
               selectedButton === '30天' ? 'bg-orange-500 text-white' : 'bg-white text-orange-500'
             ]"
@@ -80,7 +81,7 @@
         class="pt-8"
         :labels="labels"
         :name="'userCount'"
-        :barData=[newUVData,UVData]
+        :barData="[newUVData, UVData]"
         :yAxisIDBar="'y1'"
         :range="range"
         :fetchDataPromise="fetchData1Promise"
@@ -102,7 +103,7 @@
       title="页面访问量趋势"
       name="userCount1"
       :labels="labels2"
-      :lineData=[PvCount,PvCount7]
+      :lineData="[PvCount, PvCount7]"
       yAxisIDLine="y1"
       :fetchDataPromise="fetchData2Promise"
       :chartColors="{
@@ -120,7 +121,7 @@
       title="用户活跃量趋势"
       name="userCount2"
       :labels="labels2"
-      :lineData=[UvCount,UvCount7]
+      :lineData="[UvCount, UvCount7]"
       yAxisIDLine="y1"
       :fetchDataPromise="fetchData2Promise"
       :chartColors="{
@@ -138,7 +139,7 @@
       title="新用户活跃量趋势"
       name="userCount3"
       :labels="labels2"
-      :lineData=[NewCustomerCount,NewCustomerCount7]
+      :lineData="[NewCustomerCount, NewCustomerCount7]"
       yAxisIDLine="y1"
       :fetchDataPromise="fetchData2Promise"
       :chartColors="{
@@ -156,7 +157,7 @@
       title="跳出率趋势"
       name="userCount4"
       :labels="labels2"
-      :lineData=[CusLeavePercent,CusLeavePercent7]
+      :lineData="[CusLeavePercent, CusLeavePercent7]"
       yAxisIDLine="y1"
       :fetchDataPromise="fetchData2Promise"
       :chartColors="{
@@ -331,3 +332,13 @@ onMounted(async () => {
   fetchData2Promise.value = fetchHourData()
 })
 </script>
+
+<style scoped>
+.n-button:hover,
+.n-button:focus {
+  background-color: #ff7626;
+  color: #fff;
+  border-color: #ff7626;
+}
+
+</style>

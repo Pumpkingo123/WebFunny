@@ -1,7 +1,12 @@
 <template>
   <div class="w-full flex-grow bg-gray-100 relative">
     <div class="mt-3 bg-white rounded-lg mx-5">
-      <TabBar :barItems="barItems" :activeKey="activeKey" @menuChange="handleMenuChange" />
+      <TabBar
+        :barItems="barItems"
+        :activeKey="activeKey"
+        @menuChange="handleMenuChange"
+        class="border-solid border-b-2"
+      />
       <div class="w-full h-10 mt-1 flex justify-between">
         <div class="w-35 ml-4 flex flex-row justify-between">
           <div class="h-full w-18 items-center flex text-lg">时间范围</div>
@@ -83,7 +88,8 @@
             }"
             chartType="bar"
           />
-        </div></div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
